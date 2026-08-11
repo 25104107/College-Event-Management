@@ -1,0 +1,2603 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EventHub · Professional Admin Dashboard</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      /* ---------- RESET & BASE ---------- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --secondary: #db2777;
+        --accent: #059669;
+        --bg-main: #f8fafc;
+        --bg-sidebar: #ffffff;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --card-bg: #ffffff;
+        --sidebar-width: 260px;
+        --card-radius: 20px;
+        --transition: all 0.3s ease;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+      }
+
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        overflow-x: hidden;
+      }
+
+      /* ---------- SIDEBAR ---------- */
+      .sidebar {
+        width: var(--sidebar-width);
+        background: var(--bg-sidebar);
+        border-right: 1px solid var(--border);
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition: var(--transition);
+      }
+
+      .sidebar-header {
+        padding: 40px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-icon {
+        background: var(--primary);
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+      }
+
+      .logo-text {
+        font-weight: 800;
+        font-size: 1.25rem;
+        letter-spacing: -0.5px;
+        color: var(--text-main);
+      }
+
+      .nav-links {
+        flex: 1;
+        padding: 0 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        color: var(--text-muted);
+        text-decoration: none;
+        border-radius: 12px;
+        margin-bottom: 4px;
+        transition: var(--transition);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .nav-item:hover {
+        background: #f1f5f9;
+        color: var(--primary);
+      }
+
+      .nav-item.active {
+        background: #eff6ff;
+        color: var(--primary);
+      }
+
+      .nav-item i {
+        font-size: 1.1rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      .sidebar-footer {
+        padding: 24px;
+        border-top: 1px solid var(--border);
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      /* ---------- MAIN CONTENT ---------- */
+      .main-content {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        padding: 40px 60px;
+        max-width: calc(100vw - var(--sidebar-width));
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+      }
+
+      .header-title h1 {
+        font-size: 1.875rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+        letter-spacing: -0.5px;
+      }
+
+      .header-title p {
+        color: var(--text-muted);
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 16px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        border: 1px solid transparent;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+      }
+
+      .btn-outline {
+        background: white;
+        border-color: var(--border);
+        color: var(--text-main);
+      }
+
+      .btn-outline:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+      }
+
+      .btn-delete {
+        background: #fef2f2;
+        color: #ef4444;
+        border: 1px solid #fee2e2;
+        padding: 8px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-delete:hover {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+        transform: scale(1.1);
+      }
+
+      .btn-edit {
+        background: #eef2ff;
+        color: #4f46e5;
+        border: 1px solid #e0e7ff;
+        padding: 8px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-edit:hover {
+        background: #4f46e5;
+        color: white;
+        border-color: #4f46e5;
+        transform: scale(1.1);
+      }
+
+      /* ---------- MODAL STYLES ---------- */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        display: none; /* Hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-content {
+        background: white;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        border-radius: var(--card-radius);
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        animation: scaleIn 0.3s ease;
+      }
+
+      @keyframes scaleIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+
+      /* ---------- STATS GRID ---------- */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      .stat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        padding: 24px;
+        border-radius: var(--card-radius);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        font-size: 1.2rem;
+      }
+
+      .icon-blue {
+        background: #eff6ff;
+        color: #3b82f6;
+      }
+      .icon-pink {
+        background: #fdf2f8;
+        color: #ec4899;
+      }
+      .icon-green {
+        background: #f0fdf4;
+        color: #22c55e;
+      }
+      .icon-purple {
+        background: #faf5ff;
+        color: #a855f7;
+      }
+
+      .stat-value {
+        font-size: 1.875rem;
+        font-weight: 800;
+        margin-bottom: 2px;
+        color: var(--text-main);
+      }
+
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      /* ---------- DASHBOARD GRID ---------- */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+        overflow: hidden;
+      }
+
+      .card-header {
+        padding: 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .card-header h3 {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .chart-container {
+        padding: 24px;
+        height: 320px;
+      }
+
+      /* ---------- TABLE STYLES ---------- */
+      .table-container {
+        padding: 0;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        text-align: left;
+        color: var(--text-muted);
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 16px 24px;
+        background: #f8fafc;
+        border-bottom: 1px solid var(--border);
+      }
+
+      td {
+        padding: 16px 24px;
+        font-size: 0.95rem;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-main);
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      .badge {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .badge-primary {
+        background: #eef2ff;
+        color: var(--primary);
+      }
+      .badge-success {
+        background: #f0fdf4;
+        color: var(--accent);
+      }
+      .badge-warning {
+        background: #fffbeb;
+        color: var(--warning);
+      }
+      .badge-danger {
+        background: #fef2f2;
+        color: var(--danger);
+      }
+
+      /* ---------- FORM STYLES ---------- */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        padding: 32px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-group label {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        background: white;
+        border: 1px solid var(--border);
+        padding: 12px 16px;
+        border-radius: 12px;
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 0.95rem;
+        outline: none;
+        transition: var(--transition);
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+      }
+
+      .form-actions {
+        padding: 24px 32px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        background: #f8fafc;
+      }
+
+      /* ---------- ACTIVITY LIST ---------- */
+      .activity-list {
+        padding: 8px 0;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        color: var(--primary);
+        font-size: 0.9rem;
+      }
+
+      .activity-content p {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+      }
+
+      .activity-content span {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      /* ---------- SECTIONS ---------- */
+      .content-section {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .content-section.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* ---------- FILTERS ---------- */
+      .filters-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .filter-input {
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        outline: none;
+        background: white;
+        color: var(--text-main);
+        transition: var(--transition);
+        flex: 1;
+        min-width: 140px;
+      }
+
+      .filter-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      }
+
+      /* ---------- TOASTS ---------- */
+      #toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .toast {
+        background: white;
+        color: var(--text-main);
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideIn 0.3s ease;
+        border-left: 4px solid var(--primary);
+        min-width: 300px;
+      }
+
+      .toast.success {
+        border-left-color: var(--success);
+      }
+      .toast.danger {
+        border-left-color: var(--danger);
+      }
+      .toast.warning {
+        border-left-color: var(--warning);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .toast.fade-out {
+        animation: fadeOut 0.3s ease forwards;
+      }
+
+      @keyframes fadeOut {
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+
+      /* ---------- RESPONSIVENESS ---------- */
+      @media (max-width: 1024px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 80px;
+        }
+        .sidebar .logo-text,
+        .sidebar .nav-item span,
+        .sidebar .user-info {
+          display: none;
+        }
+        .main-content {
+          margin-left: 80px;
+          padding: 32px 24px;
+        }
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      /* Dark Mode Admin Overrides */
+      body.dark-mode {
+        --bg-main: #0f172a;
+        --bg-sidebar: #1e293b;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --border: #334155;
+        --card-bg: #1e293b;
+      }
+      body.dark-mode .nav-item:hover, body.dark-mode .nav-item.active {
+        background: #334155;
+        color: #818cf8;
+      }
+      .logout-item {
+        margin-top: auto !important;
+        margin-bottom: 12px !important;
+        color: #ef4444 !important;
+      }
+      .logout-item:hover {
+        background: #fef2f2 !important;
+        color: #ef4444 !important;
+      }
+      body.dark-mode .logout-item:hover {
+        background: rgba(239, 68, 68, 0.1) !important;
+      }
+      body.dark-mode .table th {
+        background: #334155;
+      }
+      body.dark-mode .form-group input, body.dark-mode .form-group select, body.dark-mode .form-group textarea {
+        background: #334155;
+        color: #f1f5f9;
+      }
+      body.dark-mode .form-actions {
+        background: #1e293b;
+      }
+      body.dark-mode .nav-actions button {
+        color: #f1f5f9 !important;
+      }
+
+      /* RTL Admin Overrides */
+      body.rtl {
+        direction: rtl;
+        text-align: right;
+      }
+      body.rtl .sidebar {
+        right: 0;
+        left: auto;
+        border-right: none;
+        border-left: 1px solid var(--border);
+      }
+      body.rtl .main-content {
+        margin-right: var(--sidebar-width);
+        margin-left: 0;
+      }
+      body.rtl .header-actions {
+        margin-left: 0;
+      }
+      body.dark-mode .nav-item:hover, body.dark-mode .nav-item.active {
+        background: #334155;
+        color: #818cf8;
+      }
+      body.dark-mode .table th {
+        background: #334155;
+      }
+      body.dark-mode .form-group input, body.dark-mode .form-group select, body.dark-mode .form-group textarea {
+        background: #334155;
+        color: #f1f5f9;
+      }
+      body.dark-mode .form-actions {
+        background: #1e293b;
+      }
+      body.dark-mode .nav-actions button {
+        color: #f1f5f9 !important;
+      }
+      
+      /* Component Specific Dark Mode Fixes */
+      body.dark-mode th {
+        background: #334155;
+        color: #cbd5e1;
+        border-bottom-color: #475569;
+      }
+      body.dark-mode td {
+        border-bottom-color: #334155;
+      }
+      body.dark-mode .icon-blue { background: rgba(59, 130, 246, 0.2); }
+      body.dark-mode .icon-pink { background: rgba(236, 72, 153, 0.2); }
+      body.dark-mode .icon-green { background: rgba(34, 197, 94, 0.2); }
+      body.dark-mode .icon-purple { background: rgba(168, 85, 247, 0.2); }
+      body.dark-mode .badge-primary { background: rgba(79, 70, 229, 0.2); }
+      body.dark-mode .badge-success { background: rgba(16, 185, 129, 0.2); }
+      body.dark-mode .badge-warning { background: rgba(245, 158, 11, 0.2); }
+      body.dark-mode .badge-danger { background: rgba(239, 68, 68, 0.2); }
+      body.dark-mode .activity-icon { background: #334155; }
+      body.dark-mode .filter-input {
+        background: #334155;
+        color: #f1f5f9;
+        border-color: #475569;
+      }
+      body.dark-mode .modal-content {
+        background: #1e293b;
+      }
+      body.dark-mode .card-header {
+        border-bottom-color: #334155;
+      }
+      body.dark-mode .form-actions {
+        border-top-color: #334155;
+      }
+      body.dark-mode .btn-outline {
+        background: transparent;
+        color: #f1f5f9;
+        border-color: #475569;
+      }
+      body.dark-mode .btn-outline:hover {
+        background: #334155;
+      }
+      body.dark-mode .toast {
+        background: #1e293b;
+        color: #f1f5f9;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      }
+      body.dark-mode .user-avatar {
+        background: #334155;
+        color: #f1f5f9;
+      }
+
+      /* Admin-specific Toggle Style Override */
+      .sidebar .nav-actions {
+        display: flex;
+        flex-direction: column;
+        padding: 0 !important; /* Remove double padding */
+        margin-top: 0 !important;
+        gap: 0 !important;
+      }
+
+      #dirToggleBtn, #themeToggleBtn {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        padding: 14px 16px !important;
+        color: var(--text-muted) !important;
+        border-radius: 12px !important;
+        margin-bottom: 4px !important;
+        transition: var(--transition) !important;
+        cursor: pointer !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        width: 100% !important;
+        border: none !important;
+        background: transparent !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        margin-right: 0 !important;
+        font-family: inherit !important;
+      }
+
+      #dirToggleBtn:hover, #themeToggleBtn:hover {
+        background: #f1f5f9 !important;
+        color: var(--primary) !important;
+      }
+
+      body.dark-mode #dirToggleBtn:hover, body.dark-mode #themeToggleBtn:hover {
+        background: #334155 !important;
+        color: #818cf8 !important;
+      }
+
+      #dirToggleBtn::before {
+        content: "\f1ab"; /* Language icon */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        width: 24px;
+        text-align: center;
+        font-size: 1.1rem;
+      }
+
+      #themeToggleBtn i {
+        font-size: 1.1rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      #themeToggleBtn {
+        position: relative;
+        padding-left: 16px !important;
+      }
+      
+      #themeToggleBtn::after {
+        content: "Appearance";
+        margin-left: 0px;
+      }
+      
+      #dirToggleBtn {
+        text-transform: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+        <span class="logo-text">EventHub</span>
+      </div>
+      <nav class="nav-links">
+        <div class="nav-item active" onclick="showSection('dashboard')">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="showSection('view-events')">
+          <i class="fas fa-calendar-alt"></i>
+          <span>All Events</span>
+        </div>
+        <div class="nav-item" onclick="showSection('add-event')">
+          <i class="fas fa-plus-circle"></i>
+          <span>Add Event</span>
+        </div>
+        <div class="nav-item" onclick="showSection('reports')">
+          <i class="fas fa-file-alt"></i>
+          <span>Reports</span>
+        </div>
+        <div class="nav-actions"></div>
+        <div class="nav-item logout-item" onclick="handleLogout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <p style="font-weight: 700; font-size: 0.9rem">Admin User</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted)">
+              Super Admin
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-title">
+          <h1 id="section-title">Dashboard Overview</h1>
+          <p id="section-subtitle">
+            Welcome back, ADMIN. Here's your summary for today.
+          </p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="showSection('add-event')">
+            <i class="fas fa-plus"></i> Create Event
+          </button>
+        </div>
+      </header>
+
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboard" class="content-section active">
+        <div class="stats-grid">
+          <div class="stat-card" style="cursor: pointer;" onclick="showSection('view-events')" title="View All Events">
+            <div class="stat-icon icon-blue">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-value" id="stat-total-events">0</div>
+            <div class="stat-label">Total Events (Click to View All)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon icon-pink"><i class="fas fa-users"></i></div>
+            <div class="stat-value" id="stat-total-students">0</div>
+            <div class="stat-label">Total Registrations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon icon-green">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="stat-value" id="stat-locations">0</div>
+            <div class="stat-label">Unique Locations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon icon-purple">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value" id="stat-upcoming">0</div>
+            <div class="stat-label">Upcoming Events</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Registration Trends</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="dashboardChart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Recent Activity</h3>
+            </div>
+            <div class="activity-list" id="recent-activity">
+              <!-- Dynamically filled -->
+            </div>
+          </div>
+        </div>
+
+        <!-- AI ADMIN ANALYTICS GRID -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 24px;">
+          <!-- AI Feedback & Sentiment -->
+          <div class="card" style="padding: 24px; border-radius: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3 style="font-size: 1.1rem; margin: 0; color: #1e293b;"><i class="fas fa-heart-pulse" style="color: #ec4899;"></i> AI Sentiment & Review Analysis</h3>
+              <span class="ai-badge">92% Positive</span>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">AI key takeaways from recent attendee feedback across hackathons & workshops:</p>
+            <ul style="font-size: 0.85rem; color: #334155; padding-left: 18px; margin-bottom: 16px;">
+              <li style="margin-bottom: 6px;">High praise for hands-on technical workshop mentors.</li>
+              <li style="margin-bottom: 6px;">Seamless digital QR badge check-in experience.</li>
+              <li>Requested additional power sockets in Hall 3 for long hackathons.</li>
+            </ul>
+            <button class="btn btn-outline" style="width: 100%; justify-content: center; font-size: 0.85rem;" onclick="showToast('AI Feedback Report generated & downloaded!')">
+              <i class="fas fa-file-export"></i> Export AI Feedback Report
+            </button>
+          </div>
+
+          <!-- AI Turnout Predictor -->
+          <div class="card" style="padding: 24px; border-radius: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3 style="font-size: 1.1rem; margin: 0; color: #1e293b;"><i class="fas fa-chart-line" style="color: #6366f1;"></i> AI Turnout & Demand Forecast</h3>
+              <span class="ai-badge">94% Confidence</span>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
+              <div style="font-size: 2.2rem; font-weight: 800; color: #4f46e5;">184 / 200</div>
+              <div style="font-size: 0.8rem; color: #64748b;">Expected attendees for upcoming <strong>Hackathon 2026</strong> based on registration trends.</div>
+            </div>
+            <div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 0.8rem; color: #475569;">
+              <i class="fas fa-lightbulb" style="color: #eab308;"></i> <strong>AI Insight:</strong> Expect peak entry between 09:15 AM - 10:00 AM. Allocate extra check-in desks at North Gate.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW EVENTS SECTION -->
+      <section id="view-events" class="content-section">
+        <div class="card">
+          <div class="card-header">
+            <div style="display: flex; align-items: center; gap: 16px">
+              <h3>Event Management</h3>
+              <button
+                class="btn btn-outline"
+                onclick="exportToCSV()"
+                style="padding: 6px 12px; font-size: 0.8rem"
+              >
+                <i class="fas fa-download"></i> Export CSV
+              </button>
+            </div>
+            <div
+              class="filters-row"
+              style="
+                width: 100%;
+                margin-top: 8px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+              "
+            >
+              <input
+                type="text"
+                id="event-search"
+                placeholder="Search event..."
+                onkeyup="filterEvents()"
+                class="filter-input"
+              />
+              <input
+                type="text"
+                id="filter-college"
+                placeholder="By College..."
+                onkeyup="filterEvents()"
+                class="filter-input"
+              />
+              <select
+                id="filter-location"
+                onchange="filterEvents()"
+                class="filter-input"
+              >
+                <option value="">All Locations</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Coimbatore">Coimbatore</option>
+                <option value="Madurai">Madurai</option>
+              </select>
+              <select
+                id="filter-type"
+                onchange="filterEvents()"
+                class="filter-input"
+              >
+                <option value="">All Types</option>
+                <option value="Technical">Technical</option>
+                <option value="Non-Technical">Non-Technical</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Cultural">Cultural</option>
+                <option value="Sports">Sports</option>
+                <option value="Seminar">Seminar</option>
+              </select>
+              <input
+                type="date"
+                id="filter-date"
+                onchange="filterEvents()"
+                class="filter-input"
+              />
+            </div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Event Name</th>
+                  <th>College</th>
+                  <th>Location</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Students</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="events-table-body">
+                <!-- Dynamically filled -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADD EVENT SECTION -->
+      <section id="add-event" class="content-section">
+        <div class="card" style="max-width: 900px; margin: 0 auto">
+          <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h3>Create New Event</h3>
+            <button type="button" class="btn btn-ai" onclick="generateAIEventDetails()">
+              <i class="fas fa-wand-magic-sparkles"></i> Generate Details with AI
+            </button>
+          </div>
+          <form id="add-event-form" onsubmit="saveEvent(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Event Name</label>
+                <input
+                  type="text"
+                  id="event-name"
+                  required
+                  placeholder="e.g. AI Innovation Hackathon"
+                />
+              </div>
+              <div class="form-group">
+                <label>Location</label>
+                <select id="event-location" required>
+                  <option value="">Select Location</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Coimbatore">Coimbatore</option>
+                  <option value="Madurai">Madurai</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="event-date" required />
+              </div>
+              <div class="form-group">
+                <label>Event Type</label>
+                <select id="event-type" required>
+                  <option value="">Select Type</option>
+                  <option value="Technical">Technical</option>
+                  <option value="Non-Technical">Non-Technical</option>
+                  <option value="Workshop">Workshop</option>
+                  <option value="Cultural">Cultural</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Seminar">Seminar</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Participation Type</label>
+                <select id="event-team-type" required>
+                  <option value="individual">Individual Event</option>
+                  <option value="team">Team Event</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>College</label>
+                <input
+                  type="text"
+                  id="event-college"
+                  required
+                  placeholder="e.g. College Name"
+                />
+              </div>
+              <div class="form-group">
+                <label>Venue</label>
+                <input
+                  type="text"
+                  id="event-venue"
+                  required
+                  placeholder="e.g. Auditorium"
+                />
+              </div>
+              <div class="form-group">
+                <label>Organizer</label>
+                <input
+                  type="text"
+                  id="event-organizer"
+                  required
+                  placeholder="e.g. CSE Dept"
+                />
+              </div>
+              <div class="form-group">
+                <label>Event Coordinator</label>
+                <input
+                  type="text"
+                  id="event-coordinator"
+                  required
+                  placeholder="e.g. Dr. Rajesh Kumar"
+                />
+              </div>
+              <div class="form-group">
+                <label>Contact Phone</label>
+                <input
+                  type="tel"
+                  id="event-phone"
+                  required
+                  placeholder="+91 9876543210"
+                />
+              </div>
+              <div class="form-group">
+                <label>Initial Registrations</label>
+                <input
+                  type="number"
+                  id="event-students"
+                  required
+                  min="0"
+                  placeholder="0"
+                />
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea
+                  id="event-desc"
+                  rows="3"
+                  placeholder="Brief event description..."
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label>Image URL (Optional)</label>
+                <input
+                  type="url"
+                  id="event-image"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-outline"
+                onclick="showSection('dashboard')"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">Save Event</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- REPORTS SECTION -->
+      <section id="reports" class="content-section">
+        <div
+          class="stats-grid"
+          style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px"
+        >
+          <div class="card">
+            <div class="card-header">
+              <h3>Category Distribution</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="reportsPieChart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Location Distribution</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="locationPieChart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>College Distribution</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="collegePieChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid" style="grid-template-columns: 1fr">
+          <div class="card">
+            <div class="card-header">
+              <h3>Performance Highlights</h3>
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                padding: 32px;
+                gap: 40px;
+              "
+            >
+              <div>
+                <p
+                  style="
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    font-size: 0.8rem;
+                    text-transform: uppercase;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Avg. Attendance
+                </p>
+                <h2
+                  id="stat-avg-students"
+                  style="font-size: 2.5rem; font-weight: 800"
+                >
+                  0
+                </h2>
+              </div>
+              <div>
+                <p
+                  style="
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    font-size: 0.8rem;
+                    text-transform: uppercase;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Top Category
+                </p>
+                <h3
+                  id="stat-popular-type"
+                  style="
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    color: var(--primary);
+                  "
+                >
+                  -
+                </h3>
+              </div>
+              <div>
+                <p
+                  style="
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    font-size: 0.8rem;
+                    text-transform: uppercase;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Primary Location
+                </p>
+                <h3
+                  id="stat-top-location"
+                  style="
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    color: var(--secondary);
+                  "
+                >
+                  -
+                </h3>
+              </div>
+              <div>
+                <p
+                  style="
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    font-size: 0.8rem;
+                    text-transform: uppercase;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Top College
+                </p>
+                <h3
+                  id="stat-top-college"
+                  style="
+                    font-size: 1.2rem;
+                    font-weight: 700;
+                    color: var(--accent);
+                  "
+                >
+                  -
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Detailed Performance Report</h3>
+            <button class="btn btn-outline" onclick="window.print()">
+              <i class="fas fa-download"></i> Export Report
+            </button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Total Events</th>
+                  <th>Total Registrations</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="reports-table-body">
+                <!-- Dynamically filled -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <script>
+      // Initial Data from events.html base
+      const defaultEvents = [
+        {
+          id: 'hackathon-2026',
+          name: 'Hackathon 2026',
+          location: 'Coimbatore',
+          date: '2026-03-25',
+          type: 'Technical',
+          students: 450,
+          college: 'PSG College of Technology',
+          venue: 'Auditorium',
+          organizer: 'CSE Dept',
+          coordinator: 'Dr. Rajesh Kumar',
+          phone: '+91 9876543210',
+          desc: 'Join the biggest coding competition on campus. Build projects and compete for prizes.',
+        },
+        {
+          id: 'debate-competition',
+          name: 'Inter-College Debate',
+          location: 'Coimbatore',
+          date: '2026-05-01',
+          type: 'Non-Technical',
+          students: 120,
+          college: 'PSG College of Technology',
+          venue: 'Auditorium',
+          organizer: 'English Dept',
+          coordinator: 'Prof. Anjali Sharma',
+          phone: '+91 9876543211',
+          desc: 'Engage in intellectual discussions and improve your debating skills.',
+        },
+        {
+          id: 'robotics-workshop',
+          name: 'Robotics Workshop',
+          location: 'Coimbatore',
+          date: '2026-04-02',
+          type: 'Technical',
+          students: 310,
+          college: 'Coimbatore Institute of Technology',
+          venue: 'Lab 2',
+          organizer: 'Robotics Club',
+          coordinator: 'Vikram Bhatt',
+          phone: '+91 9876543212',
+          desc: 'Hands-on robotics sessions where you build and program real robots.',
+        },
+        {
+          id: 'mobile-app-dev-workshop',
+          name: 'Mobile App Development Workshop',
+          location: 'Coimbatore',
+          date: '2026-05-12',
+          type: 'Non-Technical',
+          students: 150,
+          college: 'Coimbatore Institute of Technology',
+          venue: 'Innovation Lab',
+          organizer: 'Mobile Dev Club',
+          coordinator: 'Neha Patel',
+          phone: '+91 9876543213',
+          desc: 'Build your first mobile app using modern frameworks.',
+        },
+        {
+          id: 'data-science-seminar',
+          name: 'Data Science Seminar',
+          location: 'Coimbatore',
+          date: '2026-03-28',
+          type: 'Technical',
+          students: 280,
+          college: 'Kumaraguru College of Technology',
+          venue: 'Seminar Hall',
+          organizer: 'Data Science Club',
+          coordinator: 'Dr. Priya Singh',
+          phone: '+91 9876543214',
+          desc: 'Explore the world of data science and machine learning with industry experts.',
+        },
+        {
+          id: 'environmental-awareness-seminar',
+          name: 'Environmental Awareness Seminar',
+          location: 'Coimbatore',
+          date: '2026-05-15',
+          type: 'Non-Technical',
+          students: 95,
+          college: 'Kumaraguru College of Technology',
+          venue: 'Seminar Hall',
+          organizer: 'Green Club',
+          coordinator: 'Rohit Desai',
+          phone: '+91 9876543215',
+          desc: 'Learn about sustainable practices and environmental conservation.',
+        },
+        {
+          id: 'iot-workshop',
+          name: 'Internet of Things Workshop',
+          location: 'Chennai',
+          date: '2026-06-08',
+          type: 'Technical',
+          students: 180,
+          college: 'Anna University',
+          venue: 'Electronics Lab',
+          organizer: 'IoT Club',
+          coordinator: 'Arun Kumar',
+          phone: '+91 9876543216',
+          desc: 'Build smart IoT devices and understand connected technologies.',
+        },
+        {
+          id: 'music-festival',
+          name: 'Music Festival',
+          location: 'Chennai',
+          date: '2026-05-05',
+          type: 'Non-Technical',
+          students: 1200,
+          college: 'Anna University',
+          venue: 'Open Stage',
+          organizer: 'Music Club',
+          coordinator: 'Divya Krishnan',
+          phone: '+91 9876543217',
+          desc: 'Celebrate music with performances from various artists and bands.',
+        },
+        {
+          id: 'ai-seminar',
+          name: 'AI Seminar',
+          location: 'Chennai',
+          date: '2026-04-15',
+          type: 'Technical',
+          students: 350,
+          college: 'IIT Madras',
+          venue: 'Seminar Hall',
+          organizer: 'IT Dept',
+          coordinator: 'Prof. Venkatesh Rao',
+          phone: '+91 9876543218',
+          desc: 'Learn about the latest advances in AI from industry experts.',
+        },
+        {
+          id: 'entrepreneurship-seminar',
+          name: 'Entrepreneurship Seminar',
+          location: 'Chennai',
+          date: '2026-04-28',
+          type: 'Non-Technical',
+          students: 220,
+          college: 'IIT Madras',
+          venue: 'Conference Hall',
+          organizer: 'Entrepreneurship Cell',
+          coordinator: 'Meera Iyer',
+          phone: '+91 9876543219',
+          desc: 'Learn from successful entrepreneurs and start your journey.',
+        },
+        {
+          id: 'python-programming-bootcamp',
+          name: 'Python Programming Bootcamp',
+          location: 'Chennai',
+          date: '2026-06-25',
+          type: 'Technical',
+          students: 500,
+          college: 'SRM Institute of Science and Technology',
+          venue: 'Coding Lab',
+          organizer: 'Programming Club',
+          coordinator: 'Sanjay Nath',
+          phone: '+91 9876543220',
+          desc: 'Intensive Python programming course for beginners to advanced.',
+        },
+        {
+          id: 'gaming-tournament',
+          name: 'E-Sports Gaming Tournament',
+          location: 'Chennai',
+          date: '2026-05-18',
+          type: 'Non-Technical',
+          students: 650,
+          college: 'SRM Institute of Science and Technology',
+          venue: 'Gaming Arena',
+          organizer: 'Gaming Society',
+          coordinator: 'Arjun Verma',
+          phone: '+91 9876543221',
+          desc: 'Compete in popular e-sports games and win amazing prizes.',
+        },
+        {
+          id: 'cloud-computing-workshop',
+          name: 'Cloud Computing Workshop',
+          location: 'Madurai',
+          date: '2026-05-25',
+          type: 'Technical',
+          students: 240,
+          college: 'Madurai Kamaraj University',
+          venue: 'Computer Center',
+          organizer: 'Cloud Tech Dept',
+          coordinator: 'Harish Kumar',
+          phone: '+91 9876543222',
+          desc: 'Master cloud technologies and deployment strategies.',
+        },
+        {
+          id: 'football-tournament',
+          name: 'Football Tournament',
+          location: 'Madurai',
+          date: '2026-04-20',
+          type: 'Non-Technical',
+          students: 800,
+          college: 'Madurai Kamaraj University',
+          venue: 'Sports Ground',
+          organizer: 'Sports Club',
+          coordinator: 'Mithun Singh',
+          phone: '+91 9876543223',
+          desc: 'Join or cheer as teams compete for the campus football trophy.',
+        },
+        {
+          id: 'web-dev-workshop',
+          name: 'Web Development Workshop',
+          location: 'Madurai',
+          date: '2026-04-25',
+          type: 'Technical',
+          students: 220,
+          college: 'Thiagarajar College',
+          venue: 'Computer Lab',
+          organizer: 'IT Club',
+          coordinator: 'Rishab Malhotra',
+          phone: '+91 9876543224',
+          desc: 'Learn modern web development techniques with hands-on projects.',
+        },
+        {
+          id: 'mental-health-awareness',
+          name: 'Mental Health Awareness Program',
+          location: 'Madurai',
+          date: '2026-05-28',
+          type: 'Non-Technical',
+          students: 150,
+          college: 'Thiagarajar College',
+          venue: 'Student Center',
+          organizer: 'Wellness Committee',
+          coordinator: 'Dr. Anjana Nair',
+          phone: '+91 9876543225',
+          desc: 'Important discussions on mental health and well-being.',
+        },
+        {
+          id: 'blockchain-conference',
+          name: 'Blockchain Technology Conference',
+          location: 'Madurai',
+          date: '2026-04-18',
+          type: 'Technical',
+          students: 190,
+          college: 'American College',
+          venue: 'Auditorium',
+          organizer: 'Blockchain Society',
+          coordinator: 'Karan Patel',
+          phone: '+91 9876543226',
+          desc: 'Discover the future of blockchain technology and cryptocurrency.',
+        },
+        {
+          id: 'cricket-tournament',
+          name: 'Inter-College Cricket Tournament',
+          location: 'Madurai',
+          date: '2026-05-03',
+          type: 'Non-Technical',
+          students: 1100,
+          college: 'American College',
+          venue: 'Cricket Ground',
+          organizer: 'Cricket Club',
+          coordinator: 'Sushant Gupta',
+          phone: '+91 9876543227',
+          desc: 'Exciting cricket matches between top college teams.',
+        },
+      ]
+
+      let rawEvents = JSON.parse(localStorage.getItem('events'))
+      if (!rawEvents) {
+        rawEvents = defaultEvents
+        localStorage.setItem('events', JSON.stringify(rawEvents))
+      }
+
+      // Sync and Normalize events
+      const defaultLookup = {}
+      defaultEvents.forEach(e => { defaultLookup[e.id] = e; });
+
+      let events = rawEvents.map((e) => {
+        const fallback = defaultLookup[e.id] || {};
+        return {
+          id: e.id,
+          name: e.name || e.title || 'Untitled Event',
+          location: e.location || e.city || 'Unknown',
+          date: e.date || 'TBD',
+          type: e.type || e.category || 'General',
+          teamType: e.teamType || (e.type === 'team' || e.type === 'individual' ? e.type : 'individual'),
+          college: e.college || 'Unknown',
+          venue: e.venue || 'TBD',
+          organizer: e.organizer || 'Unknown',
+          coordinator: (e.coordinator && e.coordinator !== 'N/A') ? e.coordinator : (fallback.coordinator || 'N/A'),
+          phone: (e.phone && e.phone !== 'N/A') ? e.phone : (fallback.phone || 'N/A'),
+          students: parseInt(e.students) || (fallback.students ? parseInt(fallback.students) : 150),
+          desc: e.desc || e.description || '',
+          image: e.image || `https://picsum.photos/500/300?random=${e.id || Math.floor(Math.random() * 1000)}`,
+        }
+      })
+
+      // Filter deleted events
+      const deletedEvents = JSON.parse(localStorage.getItem('deletedEvents')) || []
+      events = events.filter((e) => !deletedEvents.includes(String(e.id)) && !deletedEvents.includes(e.id))
+
+      // Always save back to ensure schema consistency
+      localStorage.setItem('events', JSON.stringify(events))
+
+      let dashboardChart = null
+      let reportsPieChart = null
+      let locationPieChart = null
+      let collegePieChart = null
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
+        initCharts()
+        updateDashboard()
+        renderEventsTable()
+        updateReports()
+        renderActivities()
+
+        // Add event listener for delete buttons
+        document
+          .getElementById('events-table-body')
+          .addEventListener('click', (e) => {
+            if (e.target.closest('.btn-delete')) {
+              const eventId = e.target
+                .closest('.btn-delete')
+                .getAttribute('data-event-id')
+              deleteEvent(eventId)
+            }
+          })
+
+        // Auto-refresh when localStorage changes across tabs
+        window.addEventListener('storage', (e) => {
+          if (
+            e.key === 'events' ||
+            e.key === 'deletedEvents' ||
+            e.key === 'activities'
+          ) {
+            location.reload()
+          }
+        })
+      })
+
+      // Chart Logic
+      function initCharts() {
+        const ctxDash = document
+          .getElementById('dashboardChart')
+          .getContext('2d')
+        const ctxPie = document
+          .getElementById('reportsPieChart')
+          .getContext('2d')
+        const ctxLoc = document
+          .getElementById('locationPieChart')
+          .getContext('2d')
+        const ctxCol = document
+          .getElementById('collegePieChart')
+          .getContext('2d')
+
+        Chart.defaults.color = '#64748b'
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif"
+
+        let gradientDash = ctxDash.createLinearGradient(0, 0, 0, 320)
+        gradientDash.addColorStop(0, 'rgba(79, 70, 229, 0.25)')
+        gradientDash.addColorStop(1, 'rgba(79, 70, 229, 0)')
+
+        dashboardChart = new Chart(ctxDash, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: 'Registrations',
+                data: [],
+                borderColor: '#4f46e5',
+                backgroundColor: gradientDash,
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#4f46e5',
+                pointBorderWidth: 2,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#4f46e5',
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: '#0f172a',
+                padding: 12,
+                cornerRadius: 8,
+                displayColors: false,
+                callbacks: {
+                  label: function (context) {
+                    return context.parsed.y + ' Registrations'
+                  },
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: { color: '#f1f5f9', borderDash: [4, 4] },
+                border: { display: false },
+                ticks: { padding: 8 },
+              },
+              x: {
+                grid: { display: false },
+                border: { display: false },
+                ticks: { padding: 8, maxTicksLimit: 7 },
+              },
+            },
+          },
+        })
+
+        reportsPieChart = new Chart(ctxPie, {
+          type: 'doughnut',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                data: [],
+                backgroundColor: [
+                  '#4f46e5',
+                  '#db2777',
+                  '#059669',
+                  '#a855f7',
+                  '#f59e0b',
+                ],
+                borderWidth: 0,
+                hoverOffset: 10,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  padding: 20,
+                  usePointStyle: true,
+                  font: { weight: '600' },
+                },
+              },
+            },
+            cutout: '75%',
+          },
+        })
+
+        locationPieChart = new Chart(ctxLoc, {
+          type: 'doughnut',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                data: [],
+                backgroundColor: [
+                  '#0ea5e9',
+                  '#8b5cf6',
+                  '#f43f5e',
+                  '#10b981',
+                  '#f59e0b',
+                ],
+                borderWidth: 0,
+                hoverOffset: 10,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  padding: 20,
+                  usePointStyle: true,
+                  font: { weight: '600' },
+                },
+              },
+            },
+            cutout: '75%',
+          },
+        })
+
+        collegePieChart = new Chart(ctxCol, {
+          type: 'doughnut',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                data: [],
+                backgroundColor: [
+                  '#f59e0b',
+                  '#10b981',
+                  '#3b82f6',
+                  '#8b5cf6',
+                  '#ec4899',
+                  '#ef4444',
+                ],
+                borderWidth: 0,
+                hoverOffset: 10,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }, // Hide legend for college as it might be too many
+            },
+            cutout: '75%',
+          },
+        })
+      }
+
+      function updateCharts() {
+        const dailyTrends = {}
+        events.forEach((e) => {
+          if (e.date)
+            dailyTrends[e.date] = (dailyTrends[e.date] || 0) + e.students
+        })
+        const sortedDates = Object.keys(dailyTrends).sort(
+          (a, b) => new Date(a) - new Date(b),
+        )
+        dashboardChart.data.labels = sortedDates.map((d) =>
+          new Date(d).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+          }),
+        )
+        dashboardChart.data.datasets[0].data = sortedDates.map(
+          (d) => dailyTrends[d],
+        )
+        dashboardChart.update()
+
+        const catData = {}
+        events.forEach((e) => (catData[e.type] = (catData[e.type] || 0) + 1))
+        reportsPieChart.data.labels = Object.keys(catData)
+        reportsPieChart.data.datasets[0].data = Object.values(catData)
+        reportsPieChart.update()
+
+        const locData = {}
+        events.forEach(
+          (e) => (locData[e.location] = (locData[e.location] || 0) + 1),
+        )
+        locationPieChart.data.labels = Object.keys(locData)
+        locationPieChart.data.datasets[0].data = Object.values(locData)
+        locationPieChart.update()
+
+        const colData = {}
+        events.forEach((e) => {
+          if (e.college) colData[e.college] = (colData[e.college] || 0) + 1
+        })
+        collegePieChart.data.labels = Object.keys(colData)
+        collegePieChart.data.datasets[0].data = Object.values(colData)
+        collegePieChart.update()
+      }
+
+      // Navigation Logic
+      function getAdminDisplayName() {
+        let adminInfo = null;
+        try {
+          adminInfo = JSON.parse(sessionStorage.getItem('adminInfo') || localStorage.getItem('adminInfo'));
+        } catch (e) {}
+        if (adminInfo) {
+          if (adminInfo.name) return adminInfo.name;
+          if (adminInfo.username) return adminInfo.username;
+          if (adminInfo.email) {
+            const raw = adminInfo.email.split('@')[0];
+            return raw.charAt(0).toUpperCase() + raw.slice(1);
+          }
+        }
+        return 'Admin';
+      }
+
+      function updateAdminProfileUI() {
+        const name = getAdminDisplayName();
+        const nameElem = document.querySelector('.user-info p:first-child');
+        const avatarElem = document.querySelector('.user-avatar');
+        if (nameElem) nameElem.textContent = name;
+        if (avatarElem) {
+          const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+          avatarElem.textContent = initials || 'AD';
+        }
+      }
+
+      function showSection(sectionId) {
+        document
+          .querySelectorAll('.content-section')
+          .forEach((s) => s.classList.remove('active'))
+        document.getElementById(sectionId).classList.add('active')
+
+        document.querySelectorAll('.nav-item').forEach((item) => {
+          item.classList.remove('active')
+          if (item.getAttribute('onclick').includes(sectionId))
+            item.classList.add('active')
+        })
+
+        const adminName = getAdminDisplayName();
+        const titles = {
+          dashboard: [
+            'Dashboard Overview',
+            `Welcome back, ${adminName}. Here's your summary for today.`,
+          ],
+          'view-events': [
+            'Event Management',
+            'View and manage all your scheduled events.',
+          ],
+          'add-event': [
+            'Create New Event',
+            'Fill in the details to launch a new event.',
+          ],
+          reports: [
+            'Analytics & Reports',
+            'Deep dive into your event performance data.',
+          ],
+        }
+
+        document.getElementById('section-title').innerText =
+          titles[sectionId][0]
+        document.getElementById('section-subtitle').innerText =
+          titles[sectionId][1]
+
+        if (sectionId === 'dashboard' || sectionId === 'reports') {
+          updateCharts()
+          if (dashboardChart) dashboardChart.resize()
+          if (reportsPieChart) reportsPieChart.resize()
+          if (locationPieChart) locationPieChart.resize()
+          if (collegePieChart) collegePieChart.resize()
+        }
+        if (sectionId === 'dashboard') updateDashboard()
+        if (sectionId === 'view-events') renderEventsTable()
+        if (sectionId === 'reports') updateReports()
+      }
+
+      // CRUD Logic
+      function saveEvent(e) {
+        e.preventDefault()
+        const imageUrl = document.getElementById('event-image')
+          ? document.getElementById('event-image').value.trim()
+          : ''
+        const randId = Math.floor(Math.random() * 1000)
+
+        const newEvent = {
+          id: Date.now(),
+          name: document.getElementById('event-name').value,
+          location: document.getElementById('event-location').value,
+          date: document.getElementById('event-date').value,
+          type: document.getElementById('event-type').value,
+          teamType: document.getElementById('event-team-type').value,
+          college: document.getElementById('event-college').value,
+          venue: document.getElementById('event-venue').value,
+          organizer: document.getElementById('event-organizer').value,
+          coordinator: document.getElementById('event-coordinator').value,
+          phone: document.getElementById('event-phone').value,
+          students: parseInt(document.getElementById('event-students').value),
+          desc: document.getElementById('event-desc').value,
+          image: imageUrl || `https://picsum.photos/500/300?random=${randId}`,
+        }
+
+        events.push(newEvent)
+        localStorage.setItem('events', JSON.stringify(events))
+
+        document.getElementById('add-event-form').reset()
+        addActivity(`Event Created: ${newEvent.name}`)
+        showToast(`Event "${newEvent.name}" created successfully!`, 'success')
+        showSection('dashboard')
+
+        // Refresh the UI to show the new event
+        updateDashboard()
+        renderEventsTable()
+      }
+
+      function deleteEvent(id) {
+        if (confirm('Are you sure you want to delete this event?')) {
+          const eventToDelete = events.find((e) => e.id === id)
+          events = events.filter((e) => e.id !== id)
+          localStorage.setItem('events', JSON.stringify(events))
+
+          // Track deleted events for synchronization with events page
+          const deletedEvents =
+            JSON.parse(localStorage.getItem('deletedEvents')) || []
+          if (!deletedEvents.includes(id)) {
+            deletedEvents.push(id)
+            localStorage.setItem('deletedEvents', JSON.stringify(deletedEvents))
+          }
+
+          addActivity(`Event Removed: ${eventToDelete.name}`)
+          showToast(`Event deleted.`, 'danger')
+          renderEventsTable()
+          updateDashboard()
+          updateCharts()
+        }
+      }
+
+      function clearAllData() {
+        if (
+          confirm(
+            'Are you sure you want to reset all dashboard data? This will revert to defaults.',
+          )
+        ) {
+          // Normalize default events before saving
+          events = defaultEvents.map((e) => ({
+            id: e.id,
+            name: e.name,
+            location: e.location,
+            date: e.date,
+            type: e.type,
+            teamType: e.teamType || 'individual',
+            college: e.college,
+            venue: e.venue,
+            organizer: e.organizer,
+            coordinator: e.coordinator || 'N/A',
+            phone: e.phone || 'N/A',
+            students: e.students,
+            desc: e.desc,
+            image:
+              e.image ||
+              `https://picsum.photos/500/300?random=${e.id || Math.floor(Math.random() * 1000)}`,
+          }))
+
+          updateReports()
+          renderActivities()
+          showToast('Dashboard reset to default data.', 'warning')
+        }
+      }
+
+      // UI Utils
+      function getStatus(date) {
+        const today = new Date().toISOString().split('T')[0]
+        if (date < today) return { label: 'Completed', class: 'badge-danger' }
+        if (date === today) return { label: 'Ongoing', class: 'badge-warning' }
+        return { label: 'Upcoming', class: 'badge-success' }
+      }
+
+      function showToast(message, type = 'primary') {
+        const container = document.getElementById('toast-container')
+        const toast = document.createElement('div')
+        toast.className = `toast ${type}`
+        toast.innerHTML = `
+          <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+          <span>${message}</span>
+        `
+        container.appendChild(toast)
+        setTimeout(() => {
+          toast.classList.add('fade-out')
+          setTimeout(() => toast.remove(), 300)
+        }, 3000)
+      }
+
+      function exportToCSV() {
+        const headers = [
+          'Event Name',
+          'Location',
+          'College',
+          'Venue',
+          'Organizer',
+          'Date',
+          'Type',
+          'Students',
+          'Description',
+        ]
+        const rows = events.map((e) => [
+          `"${e.name}"`,
+          `"${e.location}"`,
+          `"${e.college || ''}"`,
+          `"${e.venue || ''}"`,
+          `"${e.organizer || ''}"`,
+          e.date,
+          `"${e.type}"`,
+          e.students,
+          `"${(e.desc || '').replace(/"/g, '""')}"`,
+        ])
+
+        let csvContent =
+          'data:text/csv;charset=utf-8,' +
+          headers.join(',') +
+          '\n' +
+          rows.map((r) => r.join(',')).join('\n')
+
+        const encodedUri = encodeURI(csvContent)
+        const link = document.createElement('a')
+        link.setAttribute('href', encodedUri)
+        link.setAttribute(
+          'download',
+          `eventhub_report_${new Date().toISOString().split('T')[0]}.csv`,
+        )
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        showToast('Event report exported to CSV.', 'success')
+      }
+
+      // UI Update Logic
+      function updateDashboard() {
+        document.getElementById('stat-total-events').innerText = events.length
+        document.getElementById('stat-total-students').innerText = events
+          .reduce((sum, e) => sum + e.students, 0)
+          .toLocaleString()
+        document.getElementById('stat-locations').innerText = new Set(
+          events.map((e) => e.location),
+        ).size
+
+        const today = new Date().toISOString().split('T')[0]
+        const upcoming = events.filter((e) => e.date >= today).length
+        document.getElementById('stat-upcoming').innerText = upcoming
+
+        updateCharts()
+      }
+
+      function renderEventsTable(filtered = null) {
+        const list = filtered || events
+        const tbody = document.getElementById('events-table-body')
+        tbody.innerHTML = list
+          .map((e) => {
+            const status = getStatus(e.date)
+            return `
+            <tr>
+              <td style="font-weight: 700;">${e.name}</td>
+              <td style="font-size: 0.85rem; color: var(--text-muted);">${e.college || '-'}</td>
+              <td style="color: var(--text-muted); font-weight: 500">${e.location}</td>
+              <td style="font-weight: 600">${new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+              <td><span class="badge badge-primary">${e.type}</span></td>
+              <td><span class="badge ${status.class}">${status.label}</span></td>
+              <td><span style="font-weight: 800; color: var(--primary)">${e.students.toLocaleString()}</span></td>
+              <td>
+                <div style="display: flex; gap: 8px;">
+                  <button onclick="openEditModal('${e.id}')" class="btn-edit" title="Update Event">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button onclick="deleteEvent('${e.id}')" class="btn-delete" title="Delete Event">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `
+          })
+          .join('')
+      }
+
+      function filterEvents() {
+        const query = document
+          .getElementById('event-search')
+          .value.toLowerCase()
+        const collegeQuery = document
+          .getElementById('filter-college')
+          .value.toLowerCase()
+        const location = document.getElementById('filter-location').value
+        const type = document.getElementById('filter-type').value
+        const date = document.getElementById('filter-date').value
+
+        const filtered = events.filter((e) => {
+          const matchesSearch = e.name.toLowerCase().includes(query)
+          const matchesCollege = (e.college || '')
+            .toLowerCase()
+            .includes(collegeQuery)
+          const matchesLocation = location === '' || e.location === location
+          const matchesType = type === '' || e.type === type
+          const matchesDate = date === '' || e.date === date
+          return (
+            matchesSearch &&
+            matchesCollege &&
+            matchesLocation &&
+            matchesType &&
+            matchesDate
+          )
+        })
+        renderEventsTable(filtered)
+      }
+
+      function updateReports() {
+        if (events.length === 0) return
+
+        const totalStudents = events.reduce((sum, e) => sum + e.students, 0)
+        document.getElementById('stat-avg-students').innerText = Math.round(
+          totalStudents / events.length,
+        )
+
+        const cats = {}
+        events.forEach((e) => (cats[e.type] = (cats[e.type] || 0) + 1))
+        const topType =
+          Object.entries(cats).length > 0
+            ? Object.entries(cats).sort((a, b) => b[1] - a[1])[0][0]
+            : '-'
+        document.getElementById('stat-popular-type').innerText = topType
+
+        const locs = {}
+        events.forEach((e) => (locs[e.location] = (locs[e.location] || 0) + 1))
+        const topLoc =
+          Object.entries(locs).length > 0
+            ? Object.entries(locs).sort((a, b) => b[1] - a[1])[0][0]
+            : '-'
+        document.getElementById('stat-top-location').innerText =
+          topLoc.split(',')[0]
+
+        const cols = {}
+        events.forEach((e) => {
+          if (e.college) cols[e.college] = (cols[e.college] || 0) + 1
+        })
+        const topCol =
+          Object.entries(cols).length > 0
+            ? Object.entries(cols).sort((a, b) => b[1] - a[1])[0][0]
+            : '-'
+        const topColStr =
+          topCol.length > 20 ? topCol.substring(0, 20) + '...' : topCol
+        document.getElementById('stat-top-college').innerText = topColStr
+
+        const reportData = {}
+        events.forEach((e) => {
+          if (!reportData[e.type])
+            reportData[e.type] = { count: 0, students: 0 }
+          reportData[e.type].count++
+          reportData[e.type].students += e.students
+        })
+
+        document.getElementById('reports-table-body').innerHTML =
+          Object.entries(reportData)
+            .map(
+              ([type, data]) => `
+          <tr>
+            <td style="font-weight: 700">${type}</td>
+            <td>${data.count}</td>
+            <td><span style="font-weight: 800; color: var(--primary)">${data.students.toLocaleString()}</span></td>
+            <td><span class="badge badge-success">Active</span></td>
+          </tr>
+        `,
+            )
+            .join('')
+      }
+
+      function addActivity(text) {
+        const activityList =
+          JSON.parse(localStorage.getItem('activities')) || []
+        activityList.unshift({ text, time: new Date().toISOString() })
+        localStorage.setItem(
+          'activities',
+          JSON.stringify(activityList.slice(0, 6)),
+        )
+        renderActivities()
+      }
+
+      function renderActivities() {
+        const activityList =
+          JSON.parse(localStorage.getItem('activities')) || []
+        const container = document.getElementById('recent-activity')
+        if (activityList.length > 0) {
+          container.innerHTML = activityList
+            .map(
+              (a) => `
+            <div class="activity-item">
+              <div class="activity-icon"><i class="fas fa-check"></i></div>
+              <div class="activity-content">
+                <p>${a.text}</p>
+                <span>${new Date(a.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+            </div>
+          `,
+            )
+            .join('')
+        } else {
+          container.innerHTML =
+            '<p style="padding: 32px; color: var(--text-muted); text-align: center; font-weight: 500;">No recent activity</p>'
+        }
+      }
+
+      // Initialize Dashboard
+      window.onload = () => {
+        showSection('dashboard');
+        renderActivities();
+      }
+    </script>
+
+    <!-- EDIT MODAL -->
+    <div id="edit-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="card">
+          <div class="card-header">
+            <h3>Update Event Details</h3>
+            <button class="btn-delete" onclick="closeModal()" style="border-radius: 50%; width: 32px; height: 32px; padding: 0;">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <form id="edit-event-form" onsubmit="updateEvent(event)">
+            <input type="hidden" id="edit-event-id" />
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Event Name</label>
+                <input type="text" id="edit-event-name" required />
+              </div>
+              <div class="form-group">
+                <label>Location</label>
+                <select id="edit-event-location" required>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Coimbatore">Coimbatore</option>
+                  <option value="Madurai">Madurai</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="edit-event-date" required />
+              </div>
+              <div class="form-group">
+                <label>Event Type</label>
+                <select id="edit-event-type" required>
+                  <option value="Technical">Technical</option>
+                  <option value="Non-Technical">Non-Technical</option>
+                  <option value="Workshop">Workshop</option>
+                  <option value="Cultural">Cultural</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Seminar">Seminar</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Participation Type</label>
+                <select id="edit-event-team-type" required>
+                  <option value="individual">Individual Event</option>
+                  <option value="team">Team Event</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>College</label>
+                <input type="text" id="edit-event-college" required />
+              </div>
+              <div class="form-group">
+                <label>Venue</label>
+                <input type="text" id="edit-event-venue" required />
+              </div>
+              <div class="form-group">
+                <label>Organizer</label>
+                <input type="text" id="edit-event-organizer" required />
+              </div>
+              <div class="form-group">
+                <label>Event Coordinator</label>
+                <input type="text" id="edit-event-coordinator" required />
+              </div>
+              <div class="form-group">
+                <label>Contact Phone</label>
+                <input type="tel" id="edit-event-phone" required />
+              </div>
+              <div class="form-group">
+                <label>Registrations</label>
+                <input type="number" id="edit-event-students" required min="0" />
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="edit-event-desc" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Image URL</label>
+                <input type="url" id="edit-event-image" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+              <button type="submit" class="btn btn-primary">Update Event</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openEditModal(id) {
+        const event = events.find(e => String(e.id) === String(id));
+        if (!event) return;
+
+        document.getElementById('edit-event-id').value = event.id;
+        document.getElementById('edit-event-name').value = event.name;
+        document.getElementById('edit-event-location').value = event.location;
+        document.getElementById('edit-event-date').value = event.date;
+        document.getElementById('edit-event-type').value = event.type;
+        document.getElementById('edit-event-team-type').value = event.teamType || 'individual';
+        document.getElementById('edit-event-college').value = event.college || '';
+        document.getElementById('edit-event-venue').value = event.venue || '';
+        document.getElementById('edit-event-organizer').value = event.organizer || '';
+        document.getElementById('edit-event-coordinator').value = event.coordinator || '';
+        document.getElementById('edit-event-phone').value = event.phone || '';
+        document.getElementById('edit-event-students').value = event.students;
+        document.getElementById('edit-event-desc').value = event.desc || '';
+        document.getElementById('edit-event-image').value = event.image || '';
+
+        document.getElementById('edit-modal').style.display = 'flex';
+      }
+
+      function closeModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+      }
+
+      function updateEvent(e) {
+        e.preventDefault();
+        const id = document.getElementById('edit-event-id').value;
+        const index = events.findIndex(e => String(e.id) === String(id));
+        
+        if (index !== -1) {
+          const updatedEvent = {
+            ...events[index],
+            name: document.getElementById('edit-event-name').value,
+            location: document.getElementById('edit-event-location').value,
+            date: document.getElementById('edit-event-date').value,
+            type: document.getElementById('edit-event-type').value,
+            teamType: document.getElementById('edit-event-team-type').value,
+            college: document.getElementById('edit-event-college').value,
+            venue: document.getElementById('edit-event-venue').value,
+            organizer: document.getElementById('edit-event-organizer').value,
+            coordinator: document.getElementById('edit-event-coordinator').value,
+            phone: document.getElementById('edit-event-phone').value,
+            students: parseInt(document.getElementById('edit-event-students').value),
+            desc: document.getElementById('edit-event-desc').value,
+            image: document.getElementById('edit-event-image').value
+          };
+
+          events[index] = updatedEvent;
+          localStorage.setItem('events', JSON.stringify(events));
+          
+          closeModal();
+          showToast(`Event "${updatedEvent.name}" updated successfully!`, 'success');
+          addActivity(`Event Updated: ${updatedEvent.name}`);
+          
+          renderEventsTable();
+          updateDashboard();
+        }
+      }
+
+      function handleLogout() {
+        // Show confirmation or just logout? User said "quick".
+        // I'll add a quick toast then redirect.
+        showToast('Logging out...', 'warning');
+        
+        setTimeout(() => {
+          sessionStorage.removeItem('adminLoggedIn');
+          sessionStorage.removeItem('adminInfo');
+          localStorage.removeItem('adminInfo');
+          window.location.href = 'admin-login.html';
+        }, 800);
+      }
+
+      async function generateAIEventDetails() {
+        const topic = prompt("Enter event topic (e.g. 'Cybersecurity Capture The Flag' or 'Design Sprint Workshop'):");
+        if (!topic) return;
+
+        showToast('✨ AI generating event details & agenda...', 'info');
+
+        const category = document.getElementById('event-type').value || 'Technical';
+        if (window.AIServices) {
+          const details = await window.AIServices.generateEventDetails(topic, category);
+          
+          document.getElementById('event-name').value = details.title;
+          document.getElementById('event-desc').value = `${details.description}\n\n📅 Agenda:\n${details.agenda.map(a => '• ' + a).join('\n')}\n\n📜 Rules:\n${details.rules.map(r => '• ' + r).join('\n')}`;
+          
+          if (!document.getElementById('event-college').value) {
+            document.getElementById('event-college').value = 'PSG College of Technology';
+          }
+          if (!document.getElementById('event-venue').value) {
+            document.getElementById('event-venue').value = 'Main Auditorium';
+          }
+          if (!document.getElementById('event-organizer').value) {
+            document.getElementById('event-organizer').value = 'Department Student Council';
+          }
+          if (!document.getElementById('event-coordinator').value) {
+            document.getElementById('event-coordinator').value = 'Dr. S. Sundaram';
+          }
+          if (!document.getElementById('event-phone').value) {
+            document.getElementById('event-phone').value = '+91 9443322110';
+          }
+
+          showToast('✅ AI Event details & agenda generated!', 'success');
+        }
+      }
+
+      // Security Check: Redirect if not logged in
+      (function checkAuth() {
+        const isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true' || localStorage.getItem('adminInfo');
+        if (!isLoggedIn) {
+          window.location.href = 'admin-login.html';
+        } else {
+          updateAdminProfileUI();
+        }
+      })();
+    </script>
+      <script src="global-theme.js"></script>
+  </body>
+</html>

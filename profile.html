@@ -1,0 +1,1258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.5"
+    />
+    <title>Student Profile · ULTRA (dynamic completeness)</title>
+    <!-- Font Awesome 6 (free) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* ----- LIGHT/DARK THEME VARIABLES ----- */
+      :root {
+        --bg-body: linear-gradient(145deg, #f4f7fc 0%, #e9f0fa 100%);
+        --bg-card: rgba(255, 255, 255, 0.9);
+        --text-primary: #0f172a;
+        --text-secondary: #334155;
+        --text-muted: #64748b;
+        --border-light: #dee7f2;
+        --accent: #2563eb;
+        --accent-light: #eef4ff;
+        --accent-glow: rgba(37, 99, 235, 0.2);
+        --shadow: 0 30px 50px -20px rgba(0, 34, 64, 0.3);
+        --input-bg: rgba(255, 255, 255, 0.8);
+        --input-border: #d1d9e6;
+        --card-blur: blur(12px);
+      }
+      body.dark {
+        --bg-body: linear-gradient(145deg, #0f172a 0%, #1a2438 100%);
+        --bg-card: rgba(30, 41, 59, 0.9);
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --border-light: #334155;
+        --accent: #3b82f6;
+        --accent-light: #1e3a5f;
+        --accent-glow: rgba(59, 130, 246, 0.3);
+        --shadow: 0 30px 50px -20px #00000070;
+        --input-bg: rgba(15, 23, 42, 0.8);
+        --input-border: #334155;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      body {
+        background: var(--bg-body);
+        color: var(--text-primary);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        transition:
+          background 0.3s,
+          color 0.2s;
+        backdrop-filter: var(--card-blur);
+      }
+
+      /* small theme toggle inside card (since header is removed) */
+      .theme-toggle-card {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        background: var(--accent-light);
+        border: none;
+        border-radius: 50px;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--accent);
+        font-size: 1.3rem;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px var(--accent-glow);
+        z-index: 10;
+      }
+      .theme-toggle-card:hover {
+        background: var(--accent);
+        color: white;
+        transform: rotate(15deg) scale(1.1);
+      }
+
+      /* MAIN CONTAINER (centering the card) */
+      .main-container {
+        max-width: 1500px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+        width: 100%;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .profile-grid {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .profile-card-col {
+        flex: 0 1 auto;
+        max-width: 700px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* base card style */
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(12px);
+        border-radius: 48px;
+        box-shadow: var(--shadow);
+        padding: 2rem 1.8rem 1.8rem;
+        text-align: center;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s;
+        border: 1px solid var(--border-light);
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          var(--accent-glow) 0%,
+          transparent 70%
+        );
+        opacity: 0.3;
+        z-index: 0;
+      }
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 40px 70px -20px var(--accent);
+      }
+      .card > * {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* profile view */
+      .profile-pic {
+        position: relative;
+        display: inline-block;
+      }
+      .profile-pic img {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid var(--bg-card);
+        outline: 4px solid var(--accent) 50;
+        box-shadow: 0 20px 30px -10px var(--accent);
+        transition: 0.3s;
+      }
+      .online-badge {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 22px;
+        height: 22px;
+        background: #22c55e;
+        border: 3px solid var(--bg-card);
+        border-radius: 50%;
+        box-shadow: 0 4px 8px #00000030;
+      }
+
+      .profile-name {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin: 0.8rem 0 0.2rem;
+        letter-spacing: -0.5px;
+      }
+
+      .org-badges {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.6rem;
+        margin: 0.8rem 0;
+      }
+      .org-item {
+        background: var(--accent-light);
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        color: var(--accent);
+        border: 1px solid var(--border-light);
+      }
+
+      .lang-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.2rem;
+        margin: 0.8rem 0;
+      }
+      .lang-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: var(--accent-light);
+        padding: 0.3rem 1rem;
+        border-radius: 40px;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+      .lang-level {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .availability {
+        display: inline-block;
+        background: #22c55e20;
+        color: #22c55e;
+        padding: 0.3rem 1.2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin: 0.5rem 0;
+        border: 1px solid #22c55e40;
+      }
+
+      .top-skills {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin: 1rem 0;
+      }
+      .skill-chip {
+        background: var(--accent-light);
+        padding: 0.4rem 1.2rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-primary);
+      }
+      .skill-chip i {
+        color: var(--accent);
+      }
+      .skill-progress {
+        width: 50px;
+        height: 6px;
+        background: var(--border-light);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .skill-progress-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 10px;
+      }
+
+      .display-field {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        color: var(--text-secondary);
+        margin: 0.5rem 0;
+      }
+
+      .profile-bio.display-field {
+        background: var(--accent-light);
+        padding: 0.9rem 1.5rem;
+        border-radius: 60px;
+        border-left: 4px solid var(--accent);
+        color: var(--text-secondary);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin: 1.2rem 0;
+      }
+      .social-links a {
+        color: var(--text-muted);
+        font-size: 1.5rem;
+        transition: 0.2s;
+      }
+      .social-links a:hover {
+        color: #ffffff;
+        background-color: var(--accent);
+        transform: scale(1.2);
+      }
+
+      .progress-section {
+        text-align: left;
+        margin: 1.5rem 0;
+      }
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+      .progress-bar {
+        height: 10px;
+        background: var(--border-light);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        width: 92%; /* will be updated dynamically */
+        background: linear-gradient(90deg, var(--accent), #38bdf8);
+        border-radius: 20px;
+        transition: width 0.3s ease;
+      }
+
+      .profile-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 0.9rem 2.5rem;
+        border-radius: 60px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 15px 25px -5px var(--accent);
+        margin: 0.8rem 0;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .profile-btn:hover {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+        box-shadow: 0 20px 30px -5px var(--accent);
+      }
+      .profile-btn-outline {
+        background: transparent;
+        border: 2px solid var(--accent);
+        color: var(--accent);
+        box-shadow: none;
+      }
+      .profile-btn-outline:hover {
+        background: var(--accent-light);
+        color: var(--accent);
+        transform: scale(1.02);
+      }
+
+      .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        border-top: 2px dashed var(--border-light);
+        padding-top: 1.5rem;
+      }
+      .stat-item {
+        text-align: center;
+      }
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-primary);
+      }
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+      }
+
+      /* edit card */
+      .edit-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(12px);
+        border-radius: 48px;
+        box-shadow: var(--shadow);
+        padding: 2rem 1.8rem 1.8rem;
+        border: 1px solid var(--border-light);
+        position: relative;
+        overflow: hidden;
+      }
+      .edit-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          var(--accent-glow) 0%,
+          transparent 70%
+        );
+        opacity: 0.3;
+      }
+      .edit-card > * {
+        position: relative;
+        z-index: 2;
+      }
+      .edit-card h2 {
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+      .edit-field-group {
+        margin-bottom: 1.2rem;
+        text-align: left;
+      }
+      .edit-field-group label {
+        display: block;
+        margin-bottom: 0.4rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-left: 0.5rem;
+      }
+      .edit-field-group input,
+      .edit-field-group textarea {
+        width: 100%;
+        background: var(--input-bg);
+        border: 1px solid var(--input-border);
+        border-radius: 40px;
+        padding: 0.9rem 1.5rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        outline: none;
+        transition: 0.2s;
+      }
+      .edit-field-group textarea {
+        border-radius: 30px;
+        resize: vertical;
+      }
+      .edit-field-group input:focus,
+      .edit-field-group textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+      }
+      .edit-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin: 2rem 0 0.5rem;
+      }
+      .edit-actions .btn {
+        margin: 0;
+        padding: 0.9rem 2rem;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media screen and (max-width: 600px) {
+        .profile-card-col {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="main-nav container">
+        <a class="logo" href="index.html">College Events</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="notifications.html">Notifications</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html" class="active">Profile</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="signup.html">Sign Up</a>
+          <a class="btn btn-secondary" href="login-selection.html">Login</a>
+          <button class="btn btn-secondary logout-btn" onclick="logout()" style="display: none">Logout</button>
+        </div>
+      </nav>
+    </header>
+    <div class="main-container">
+      <div class="profile-grid">
+        <div class="profile-card-col">
+          <!-- PROFILE VIEW CARD -->
+          <div id="profileView" class="card">
+
+
+            <div class="profile-pic">
+              <img
+                id="profileAvatar"
+                src="https://ui-avatars.com/api/?name=Emma+Smith&size=140&background=1d4ed8&color=fff&bold=true&length=2"
+                alt="Emma Smith"
+              />
+              <span class="online-badge"></span>
+            </div>
+
+            <div class="profile-name" id="viewName">Emma Smith</div>
+
+            <!-- Organization badges (dynamic) -->
+            <div class="org-badges" id="orgContainer"></div>
+
+            <!-- Languages (dynamic) -->
+            <div class="lang-section" id="langContainer"></div>
+
+            <!-- Availability -->
+            <div class="availability" id="availabilityContainer">
+              <span id="availabilityText">Open to freelance</span>
+            </div>
+
+            <!-- Top skills (dynamic) -->
+            <div class="top-skills" id="skillsContainer"></div>
+
+            <!-- Editable fields -->
+            <div class="display-field">
+              <i class="fas fa-laptop-code"></i>
+              <span id="deptText">Computer Science (AI)</span>
+            </div>
+            <div class="display-field">
+              <i class="fas fa-calendar-alt"></i>
+              <span id="yearText">3rd Year · B.Tech</span>
+            </div>
+            <div class="display-field">
+              <i class="fas fa-envelope"></i>
+              <span id="emailText">emma.smith@univ.edu</span>
+            </div>
+            <div class="display-field">
+              <i class="fas fa-phone-alt"></i>
+              <span id="phoneText">+1 (555) 327-1104</span>
+            </div>
+            <div class="display-field">
+              <i class="fas fa-map-pin"></i>
+              <span id="locationText">San Francisco, CA</span>
+            </div>
+            <div class="profile-bio display-field">
+              <i class="fas fa-quote-left"></i>
+              <span id="bioText"
+                >Passionate about AI & design. Organizer of CodeHer initiative.
+                Always learning.</span
+              >
+            </div>
+
+            <!-- Social links (dynamic) -->
+            <div class="social-links" id="socialContainer"></div>
+
+            <!-- EDIT button -->
+            <button class="profile-btn" id="goToEditBtn">
+              <i class="fas fa-edit"></i> Edit Profile
+            </button>
+
+            <!-- Dynamic completeness section -->
+            <div class="progress-section">
+              <div class="progress-label">
+                <span>Profile completeness</span>
+                <span id="completenessPercent">92%</span>
+              </div>
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  id="completenessBar"
+                  style="width: 92%"
+                ></div>
+              </div>
+              <div id="achievementPointsText" style="font-size: 0.9rem; margin-top: 0.4rem">
+                <i class="fas fa-star" style="color: #fbbf24"></i> Achievement
+                points: 2,450
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="profile-stats">
+              <div class="stat-item">
+                <span class="stat-value" id="eventsStat">19</span>
+                <span class="stat-label">Events</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value" id="certsStat">12</span>
+                <span class="stat-label">Certs</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value" id="badgesStat">16</span>
+                <span class="stat-label">Badges</span>
+              </div>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.8rem">
+              <i class="fas fa-shield-alt"></i> verified · active since '23 ·
+              3rd year rep
+            </p>
+          </div>
+
+          <!-- EDIT VIEW CARD (hidden initially) -->
+          <div id="editView" class="edit-card hidden">
+            <h2><i class="fas fa-user-edit"></i> Edit profile</h2>
+
+            <!-- Basic info -->
+            <div class="edit-field-group">
+              <label><i class="fas fa-user"></i> Full name</label>
+              <input type="text" id="editName" value="Emma Smith" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-laptop-code"></i> Department</label>
+              <input type="text" id="editDept" value="Computer Science (AI)" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-calendar-alt"></i> Year / Program</label>
+              <input type="text" id="editYear" value="3rd Year · B.Tech" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-envelope"></i> Email</label>
+              <input type="email" id="editEmail" value="emma.smith@univ.edu" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-phone-alt"></i> Phone</label>
+              <input type="text" id="editPhone" value="+1 (555) 327-1104" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-map-pin"></i> Location</label>
+              <input type="text" id="editLocation" value="San Francisco, CA" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-quote-left"></i> Bio</label>
+              <textarea id="editBio" rows="2">
+Passionate about AI & design. Organizer of CodeHer initiative. Always learning.</textarea
+              >
+            </div>
+
+            <!-- Organizations, languages, availability -->
+            <div class="edit-field-group">
+              <label
+                ><i class="fas fa-tags"></i> Organizations (comma
+                separated)</label
+              >
+              <input
+                type="text"
+                id="editOrgs"
+                value="GDSC Lead, CodeHer Organizer, AI Club"
+              />
+            </div>
+            <div class="edit-field-group">
+              <label
+                ><i class="fas fa-language"></i> Languages (comma separated,
+                include level)</label
+              >
+              <input
+                type="text"
+                id="editLangs"
+                value="English (Native), Spanish (B2)"
+              />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-briefcase"></i> Availability</label>
+              <input
+                type="text"
+                id="editAvailability"
+                value="Open to freelance"
+              />
+            </div>
+
+            <!-- Skills -->
+            <div
+              style="
+                border-top: 1px dashed var(--border-light);
+                margin: 1rem 0;
+                padding-top: 0.5rem;
+                font-weight: 600;
+                color: var(--accent);
+              "
+            >
+              Skills
+            </div>
+            <div class="edit-field-group">
+              <label>Skill 1 name</label>
+              <input type="text" id="editSkill1Name" value="Python" />
+            </div>
+            <div class="edit-field-group">
+              <label>Skill 1 progress %</label>
+              <input
+                type="number"
+                id="editSkill1Prog"
+                min="0"
+                max="100"
+                value="85"
+              />
+            </div>
+            <div class="edit-field-group">
+              <label>Skill 2 name</label>
+              <input type="text" id="editSkill2Name" value="ML" />
+            </div>
+            <div class="edit-field-group">
+              <label>Skill 2 progress %</label>
+              <input
+                type="number"
+                id="editSkill2Prog"
+                min="0"
+                max="100"
+                value="70"
+              />
+            </div>
+            <div class="edit-field-group">
+              <label>Skill 3 name</label>
+              <input type="text" id="editSkill3Name" value="UI/UX" />
+            </div>
+            <div class="edit-field-group">
+              <label>Skill 3 progress %</label>
+              <input
+                type="number"
+                id="editSkill3Prog"
+                min="0"
+                max="100"
+                value="60"
+              />
+            </div>
+
+            <!-- Social links -->
+            <div
+              style="
+                border-top: 1px dashed var(--border-light);
+                margin: 1rem 0;
+                padding-top: 0.5rem;
+                font-weight: 600;
+                color: var(--accent);
+              "
+            >
+              Social links
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fab fa-github"></i> GitHub URL</label>
+              <input type="url" id="editGithub" value="https://github.com/" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fab fa-linkedin-in"></i> LinkedIn URL</label>
+              <input type="url" id="editLinkedin" value="https://linkedin.com/" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fab fa-twitter"></i> Twitter URL</label>
+              <input type="url" id="editTwitter" value="https://twitter.com/" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-globe"></i> Website URL</label>
+              <input type="url" id="editWebsite" value="https://example.com/" />
+            </div>
+
+            <!-- Achievement stats -->
+            <div
+              style="
+                border-top: 1px dashed var(--border-light);
+                margin: 1rem 0;
+                padding-top: 0.5rem;
+                font-weight: 600;
+                color: var(--accent);
+              "
+            >
+              Achievement stats
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-calendar-check"></i> Events count</label>
+              <input type="number" id="editEvents" min="0" value="19" />
+            </div>
+            <div class="edit-field-group">
+              <label
+                ><i class="fas fa-certificate"></i> Certifications count</label
+              >
+              <input type="number" id="editCerts" min="0" value="12" />
+            </div>
+            <div class="edit-field-group">
+              <label><i class="fas fa-medal"></i> Badges count</label>
+              <input type="number" id="editBadges" min="0" value="16" />
+            </div>
+
+            <div class="edit-actions">
+              <button class="profile-btn" id="saveEditBtn">
+                <i class="fas fa-save"></i> Save changes
+              </button>
+              <button class="profile-btn profile-btn-outline" id="cancelEditBtn">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+
+        // ---------- TWO-PAGE EDIT ----------
+        const profileView = document.getElementById("profileView");
+        const editView = document.getElementById("editView");
+
+        // Profile display elements
+        const viewName = document.getElementById("viewName");
+        const deptText = document.getElementById("deptText");
+        const yearText = document.getElementById("yearText");
+        const emailText = document.getElementById("emailText");
+        const phoneText = document.getElementById("phoneText");
+        const locationText = document.getElementById("locationText");
+        const bioText = document.getElementById("bioText");
+        const profileAvatar = document.getElementById("profileAvatar");
+
+        // Dynamic containers
+        const orgContainer = document.getElementById("orgContainer");
+        const langContainer = document.getElementById("langContainer");
+        const availabilityText = document.getElementById("availabilityText");
+        const skillsContainer = document.getElementById("skillsContainer");
+        const socialContainer = document.getElementById("socialContainer");
+
+        // Stat spans
+        const eventsStat = document.getElementById("eventsStat");
+        const certsStat = document.getElementById("certsStat");
+        const badgesStat = document.getElementById("badgesStat");
+
+        // Completeness elements
+        const completenessPercent = document.getElementById(
+          "completenessPercent",
+        );
+        const completenessBar = document.getElementById("completenessBar");
+
+        // Edit input fields
+        const editName = document.getElementById("editName");
+        const editDept = document.getElementById("editDept");
+        const editYear = document.getElementById("editYear");
+        const editEmail = document.getElementById("editEmail");
+        const editPhone = document.getElementById("editPhone");
+        const editLocation = document.getElementById("editLocation");
+        const editBio = document.getElementById("editBio");
+        const editOrgs = document.getElementById("editOrgs");
+        const editLangs = document.getElementById("editLangs");
+        const editAvailability = document.getElementById("editAvailability");
+        const editSkill1Name = document.getElementById("editSkill1Name");
+        const editSkill1Prog = document.getElementById("editSkill1Prog");
+        const editSkill2Name = document.getElementById("editSkill2Name");
+        const editSkill2Prog = document.getElementById("editSkill2Prog");
+        const editSkill3Name = document.getElementById("editSkill3Name");
+        const editSkill3Prog = document.getElementById("editSkill3Prog");
+        const editGithub = document.getElementById("editGithub");
+        const editLinkedin = document.getElementById("editLinkedin");
+        const editTwitter = document.getElementById("editTwitter");
+        const editWebsite = document.getElementById("editWebsite");
+        const editEvents = document.getElementById("editEvents");
+        const editCerts = document.getElementById("editCerts");
+        const editBadges = document.getElementById("editBadges");
+
+        // Buttons
+        const goToEditBtn = document.getElementById("goToEditBtn");
+        const saveEditBtn = document.getElementById("saveEditBtn");
+        const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+        function hasNewSignupMarkerForUser(email) {
+          return email && localStorage.getItem(`newAccount_${email}`) === "true";
+        }
+
+        function clearNewSignupMarkerForUser(email) {
+          if (!email) return;
+          localStorage.removeItem(`newAccount_${email}`);
+        }
+
+        function calculateCompleteness() {
+          // Total possible fields:
+          // name, dept, year, email, phone, location, bio, availability (8)
+          // orgs (at least one), langs (at least one) (2)
+          // 3 skills (each counts if name not empty) (3)
+          // 4 social links (each counts if href not "#" and not empty) (4)
+          // total = 8+2+3+4 = 17
+
+          let filled = 0;
+
+          // basic text fields
+          if (viewName.textContent.trim() !== "") filled++;
+          if (deptText.textContent.trim() !== "") filled++;
+          if (yearText.textContent.trim() !== "") filled++;
+          if (emailText.textContent.trim() !== "") filled++;
+          if (phoneText.textContent.trim() !== "") filled++;
+          if (locationText.textContent.trim() !== "") filled++;
+          if (bioText.textContent.trim() !== "") filled++;
+          if (availabilityText.textContent.trim() !== "") filled++;
+
+          // organizations: at least one badge
+          if (orgContainer.children.length > 0) filled++;
+
+          // languages: at least one
+          if (langContainer.children.length > 0) filled++;
+
+          // skills: count each skill chip with a name (we already have chips)
+          const skillChips = Array.from(skillsContainer.children);
+          skillChips.forEach((chip) => {
+            // extract name (remove numbers and %)
+            const name = chip.innerText.replace(/[0-9%]/g, "").trim();
+            if (name !== "") filled++;
+          });
+          // if less than 3 chips, missing ones count as not filled, so no extra
+
+          // social links: count those with href not "#" and not empty
+          const socialAnchors = Array.from(socialContainer.children);
+          socialAnchors.forEach((a) => {
+            if (a.href && a.href !== "#" && a.href !== window.location.href)
+              filled++;
+          });
+
+          const total = 17;
+          let percent = Math.round((filled / total) * 100);
+          percent = Math.min(100, Math.max(0, percent));
+
+          const currentUserEmail = ui ? ui.email || ui.id : null;
+          if (currentUserEmail && hasNewSignupMarkerForUser(currentUserEmail)) {
+            percent = 0;
+            clearNewSignupMarkerForUser(currentUserEmail);
+          }
+
+          completenessPercent.textContent = percent + "%";
+          completenessBar.style.width = percent + "%";
+        }
+
+        // ---------- REFRESH PROFILE VIEW ----------
+        function refreshProfileView() {
+          viewName.textContent = editName.value;
+          deptText.textContent = editDept.value;
+          yearText.textContent = editYear.value;
+          emailText.textContent = editEmail.value;
+          phoneText.textContent = editPhone.value;
+          locationText.textContent = editLocation.value;
+          bioText.textContent = editBio.value;
+
+          // Update avatar
+          const newName = editName.value.trim();
+          const encodedName = encodeURIComponent(newName);
+          profileAvatar.src = `https://ui-avatars.com/api/?name=${encodedName}&size=140&background=1d4ed8&color=fff&bold=true&length=2`;
+          profileAvatar.alt = newName;
+
+          // Organizations
+          const orgs = editOrgs.value
+            .split(",")
+            .map((s) => s.trim())
+            .filter((s) => s);
+          orgContainer.innerHTML = "";
+          orgs.forEach((org) => {
+            const span = document.createElement("span");
+            span.className = "org-item";
+            span.innerHTML = `<i class="fas fa-tag"></i> ${org}`;
+            orgContainer.appendChild(span);
+          });
+
+          // Languages
+          const langs = editLangs.value
+            .split(",")
+            .map((s) => s.trim())
+            .filter((s) => s);
+          langContainer.innerHTML = "";
+          langs.forEach((lang) => {
+            const span = document.createElement("span");
+            span.className = "lang-item";
+            span.innerHTML = `<i class="fas fa-language"></i> ${lang}`;
+            langContainer.appendChild(span);
+          });
+
+          // Availability
+          availabilityText.textContent = editAvailability.value;
+
+          // Skills
+          const skills = [
+            {
+              name: editSkill1Name.value,
+              prog: parseInt(editSkill1Prog.value) || 0,
+            },
+            {
+              name: editSkill2Name.value,
+              prog: parseInt(editSkill2Prog.value) || 0,
+            },
+            {
+              name: editSkill3Name.value,
+              prog: parseInt(editSkill3Prog.value) || 0,
+            },
+          ];
+          skillsContainer.innerHTML = "";
+          skills.forEach((skill) => {
+            if (!skill.name) return;
+            const chip = document.createElement("div");
+            chip.className = "skill-chip";
+            chip.innerHTML = `<i class="fas fa-code"></i> ${skill.name} <div class="skill-progress"><div class="skill-progress-fill" style="width:${skill.prog}%"></div></div>`;
+            skillsContainer.appendChild(chip);
+          });
+
+          // Social links
+          const socialLinks = [
+            { url: editGithub.value, icon: "fab fa-github" },
+            { url: editLinkedin.value, icon: "fab fa-linkedin-in" },
+            { url: editTwitter.value, icon: "fab fa-twitter" },
+            { url: editWebsite.value, icon: "fas fa-globe" },
+          ];
+          socialContainer.innerHTML = "";
+          socialLinks.forEach((link) => {
+            const a = document.createElement("a");
+            a.href = link.url;
+            a.target = "_blank";
+            a.innerHTML = `<i class="${link.icon}"></i>`;
+            socialContainer.appendChild(a);
+          });
+
+          // Stats
+          eventsStat.textContent = editEvents.value;
+          certsStat.textContent = editCerts.value;
+          badgesStat.textContent = editBadges.value;
+
+          // Update completeness
+          calculateCompleteness();
+        }
+
+        // Populate edit fields from current profile
+        function populateEditFromProfile() {
+          editName.value = viewName.textContent;
+          editDept.value = deptText.textContent;
+          editYear.value = yearText.textContent;
+          editEmail.value = emailText.textContent;
+          editPhone.value = phoneText.textContent;
+          editLocation.value = locationText.textContent;
+          editBio.value = bioText.textContent;
+
+          // Organizations
+          const orgItems = Array.from(orgContainer.children).map((span) =>
+            span.textContent.trim(),
+          );
+          editOrgs.value = orgItems.join(", ");
+
+          // Languages
+          const langItems = Array.from(langContainer.children).map((span) =>
+            span.textContent.trim(),
+          );
+          editLangs.value = langItems.join(", ");
+
+          // Availability
+          editAvailability.value = availabilityText.textContent;
+
+          // Skills
+          const skillChips = Array.from(skillsContainer.children);
+          const skillNames = [];
+          const skillProgs = [];
+          skillChips.forEach((chip) => {
+            const fillDiv = chip.querySelector(".skill-progress-fill");
+            let prog = 0;
+            if (fillDiv) {
+              const width = fillDiv.style.width;
+              prog = parseInt(width) || 0;
+            }
+            const name = chip.innerText.replace(/[0-9%]/g, "").trim();
+            skillNames.push(name);
+            skillProgs.push(prog);
+          });
+          while (skillNames.length < 3) {
+            skillNames.push("");
+            skillProgs.push(0);
+          }
+          editSkill1Name.value = skillNames[0] || "";
+          editSkill1Prog.value = skillProgs[0] || 0;
+          editSkill2Name.value = skillNames[1] || "";
+          editSkill2Prog.value = skillProgs[1] || 0;
+          editSkill3Name.value = skillNames[2] || "";
+          editSkill3Prog.value = skillProgs[2] || 0;
+
+          // Social links
+          const socialAnchors = Array.from(socialContainer.children);
+          if (socialAnchors.length >= 4) {
+            editGithub.value = socialAnchors[0].href;
+            editLinkedin.value = socialAnchors[1].href;
+            editTwitter.value = socialAnchors[2].href;
+            editWebsite.value = socialAnchors[3].href;
+          } else {
+            editGithub.value = "https://github.com/";
+            editLinkedin.value = "https://linkedin.com/";
+            editTwitter.value = "https://twitter.com/";
+            editWebsite.value = "https://example.com/";
+          }
+
+          // Stats
+          editEvents.value = eventsStat.textContent;
+          editCerts.value = certsStat.textContent;
+          editBadges.value = badgesStat.textContent;
+        }
+
+        function showEditPage() {
+          populateEditFromProfile();
+          profileView.classList.add("hidden");
+          editView.classList.remove("hidden");
+        }
+
+        function showProfilePage() {
+          editView.classList.add("hidden");
+          profileView.classList.remove("hidden");
+        }
+
+        goToEditBtn.addEventListener("click", showEditPage);
+        saveEditBtn.addEventListener("click", () => {
+          refreshProfileView();
+          showProfilePage();
+        });
+        cancelEditBtn.addEventListener("click", showProfilePage);
+
+        // Initial build
+        profileView.classList.remove("hidden");
+        editView.classList.add("hidden");
+        const ui = JSON.parse(sessionStorage.getItem("userInfo") || localStorage.getItem("userInfo"));
+        if (ui) {
+            editName.value = ui.name || "Student User";
+            editEmail.value = ui.email || "Not specified";
+            editDept.value = ui.department || "Not specified";
+            editYear.value = ui.year || "Not specified";
+            
+            editPhone.value = "Not specified";
+            editLocation.value = "Not specified";
+            editBio.value = "Welcome to my events profile!";
+            editOrgs.value = "";
+            editLangs.value = "";
+            editAvailability.value = "Ready for events";
+            
+            editSkill1Name.value = ""; editSkill1Prog.value = 0;
+            editSkill2Name.value = ""; editSkill2Prog.value = 0;
+            editSkill3Name.value = ""; editSkill3Prog.value = 0;
+            
+            editGithub.value = "https://github.com/"; editLinkedin.value = "https://linkedin.com/"; editTwitter.value = "https://twitter.com/"; editWebsite.value = "https://example.com/";
+            
+            const userEmail = ui.email || ui.id;
+            const trueEvents = JSON.parse(localStorage.getItem(`registeredEvents_${userEmail}`) || "[]");
+            const trueCount = trueEvents.length;
+            const truePoints = trueCount * 10;
+            
+            editEvents.value = trueCount;
+            editCerts.value = 0;
+            editBadges.value = 0;
+            
+            const pointsDiv = document.getElementById("achievementPointsText");
+            if (pointsDiv) {
+               pointsDiv.innerHTML = `<i class="fas fa-star" style="color: #fbbf24"></i> Earned points: ${truePoints}`;
+            }
+        } else {
+            populateEditFromProfile();
+        }
+        refreshProfileView(); // builds containers and calculates completeness
+      })();
+
+      // Navigation Auth Logic
+    </script>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-columns">
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-university"></i> College Event Management</p>
+            <p><i class="fas fa-map-marker-alt"></i> 123 University Ave, Campus City</p>
+            <p><i class="fas fa-envelope"></i> <a href="mailto:events@college.edu" class="contact-link">events@college.edu</a></p>
+            <p><i class="fas fa-phone"></i> <a href="tel:+15551234567" class="contact-link">+1 (555) 123-4567</a></p>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="events.html">Events</a></li>
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Student Portal</h3>
+            <ul>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="profile.html">My Profile</a></li>
+              <li><a href="login.html">Student Login</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Support & Admin</h3>
+            <ul>
+              <li><a href="admin-login.html">Admin Portal</a></li>
+              <li><a href="404errorpage.html">404 Error Page</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="privacy-policy.html">Privacy Policy</a></li>
+              <li><a href="terms-of-service.html">Terms of Service</a></li>
+            </ul>
+            <div class="footer-social" style="margin-top: 1.5rem">
+              <ul class="social-links">
+                <li>
+                  <a
+                    href="https://facebook.com/collegeeventmanagement"
+                    aria-label="Facebook"
+                    target="_blank"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://twitter.com/collegeevents"
+                    aria-label="Twitter"
+                    target="_blank"
+                    ><i class="fab fa-twitter"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://instagram.com/collegeevents"
+                    aria-label="Instagram"
+                    target="_blank"
+                    ><i class="fab fa-instagram"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://linkedin.com/company/college-event-management"
+                    aria-label="LinkedIn"
+                    target="_blank"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer-newsletter-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="flex: 1; min-width: 300px">
+              <h4>Subscribe to our Newsletter</h4>
+              <p>Get latest event updates currently in your inbox.</p>
+            </div>
+            <form class="footer-newsletter-form" action="#" method="post">
+              <input name="email" type="email" placeholder="Enter your email" required />
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>&copy; 2026 College Event Management. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+      <script src="global-theme.js"></script>
+  </body>
+</html>

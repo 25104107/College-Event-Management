@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Details - Smart Event Discovery</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --secondary: #1e3a8a;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-600: #4b5563;
+        --gray-800: #1f2937;
+        --radius: 8px;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: var(--body-bg);
+        margin: 0;
+        color: var(--dark-color);
+      }
+
+      .event-details-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 15px 20px;
+      }
+
+      .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
+        padding: 6px 12px;
+        background: var(--white-color);
+        color: var(--primary-color) !important;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 1px solid var(--gray-color);
+      }
+
+      .event-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .event-hero-wrapper {
+        position: relative;
+        height: 280px;
+      }
+
+      .event-hero {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .category-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #2563eb;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.75rem;
+      }
+
+      .event-content {
+        padding: 20px;
+      }
+
+      .event-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 1.6rem;
+        color: var(--primary-color);
+      }
+
+      .event-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 15px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        color: var(--gray-color);
+      }
+
+      .meta-item i {
+        color: var(--primary-color);
+        width: 14px;
+        text-align: center;
+      }
+
+      .section-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .description-section h2 {
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+      }
+
+      .description-section p {
+        color: var(--dark-color);
+        line-height: 1.5;
+        font-size: 0.95rem;
+        margin: 0 0 15px 0;
+      }
+
+      .info-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .info-card {
+        background: var(--light-color);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--gray-color);
+        color: var(--dark-color);
+      }
+
+      .info-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--gray-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid var(--gray-color);
+        padding-bottom: 6px;
+      }
+
+      .contact-details {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .contact-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .contact-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--white-color);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        border: 1px solid var(--gray-color);
+        flex-shrink: 0;
+      }
+
+      .contact-info span {
+        display: block;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--gray-color);
+        font-weight: 700;
+        margin-bottom: 1px;
+      }
+
+      .contact-info p {
+        margin: 0;
+        font-weight: 600;
+        color: var(--dark-color);
+        font-size: 0.9rem;
+      }
+
+      .btn-call {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 5px;
+        padding: 10px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: 0.2s;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .action-buttons .btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      .btn-register {
+        background: #10b981;
+        color: white;
+      }
+      .btn-register:hover {
+        background: #059669;
+      }
+
+      .btn-bookmark {
+        background: #f59e0b;
+        color: white;
+      }
+      .btn-bookmark:hover {
+        background: #d97706;
+      }
+      .btn-bookmark.bookmarked {
+        background: #fff7ed;
+        color: #ea580c;
+        border: 1px solid #fdba74;
+      }
+
+      @media (max-width: 600px) {
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+    <!-- Font Awesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <nav class="main-nav container">
+        <a class="logo" href="index.html">College Events</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="events.html" class="active">Events</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="notifications.html">Notifications</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="signup.html">Sign Up</a>
+          <a class="btn btn-secondary" href="login-selection.html">Login</a>
+          <button
+            class="btn btn-secondary logout-btn"
+            onclick="logout()"
+            style="display: none"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <div class="event-details-container">
+      <a href="events.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Events
+      </a>
+
+      <div id="eventContent">
+        <p class="error-message">Loading event details...</p>
+      </div>
+    </div>
+<footer class="site-footer">
+      <div class="container">
+        <div class="footer-columns">
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-university"></i> College Event Management</p>
+            <p>
+              <i class="fas fa-map-marker-alt"></i> 123 University Ave, Campus
+              City
+            </p>
+            <p>
+              <i class="fas fa-envelope"></i>
+              <a href="mailto:events@college.edu" class="contact-link"
+                >events@college.edu</a
+              >
+            </p>
+            <p>
+              <i class="fas fa-phone"></i>
+              <a href="tel:+15551234567" class="contact-link"
+                >+1 (555) 123-4567</a
+              >
+            </p>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="events.html">Events</a></li>
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Student Portal</h3>
+            <ul>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="profile.html">My Profile</a></li>
+              
+              <li><a href="login.html">Student Login</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Support & Admin</h3>
+            <ul>
+              <li><a href="admin-login.html">Admin Portal</a></li>
+              <li><a href="404errorpage.html">404 Error Page</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="privacy-policy.html">Privacy Policy</a></li>
+              <li><a href="terms-of-service.html">Terms of Service</a></li>
+            </ul>
+            <div class="footer-social" style="margin-top: 1.5rem">
+              <ul class="social-links">
+                <li>
+                  <a
+                    href="https://facebook.com/collegeeventmanagement"
+                    aria-label="Facebook"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://twitter.com/collegeevents"
+                    aria-label="Twitter"
+                    ><i class="fab fa-twitter"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://instagram.com/collegeevents"
+                    aria-label="Instagram"
+                    ><i class="fab fa-instagram"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://linkedin.com/company/college-event-management"
+                    aria-label="LinkedIn"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-newsletter-section">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 1rem;
+            "
+          >
+            <div style="flex: 1; min-width: 300px">
+              <h4>Subscribe to our Newsletter</h4>
+              <p>
+                Get latest event updates and announcements directly in your
+                inbox.
+              </p>
+            </div>
+            <form class="footer-newsletter-form" action="#" method="post">
+              <input
+                id="footer-email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                required
+              />
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>&copy; 2026 College Event Management. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+    <script>
+      const initialEventsLookup = {
+        'hackathon-2026': {
+          coordinator: 'Dr. Rajesh Kumar',
+          phone: '+91 9876543210',
+        },
+        'debate-competition': {
+          coordinator: 'Prof. Anjali Sharma',
+          phone: '+91 9876543211',
+        },
+        'robotics-workshop': {
+          coordinator: 'Vikram Bhatt',
+          phone: '+91 9876543212',
+        },
+        'mobile-app-dev-workshop': {
+          coordinator: 'Neha Patel',
+          phone: '+91 9876543213',
+        },
+        'data-science-seminar': {
+          coordinator: 'Dr. Priya Singh',
+          phone: '+91 9876543214',
+        },
+        'environmental-awareness-seminar': {
+          coordinator: 'Rohit Desai',
+          phone: '+91 9876543215',
+        },
+        'iot-workshop': { coordinator: 'Arun Kumar', phone: '+91 9876543216' },
+        'music-festival': {
+          coordinator: 'Divya Krishnan',
+          phone: '+91 9876543217',
+        },
+        'ai-seminar': {
+          coordinator: 'Prof. Venkatesh Rao',
+          phone: '+91 9876543218',
+        },
+        'entrepreneurship-seminar': {
+          coordinator: 'Meera Iyer',
+          phone: '+91 9876543219',
+        },
+        'python-programming-bootcamp': {
+          coordinator: 'Sanjay Nath',
+          phone: '+91 9876543220',
+        },
+        'gaming-tournament': {
+          coordinator: 'Arjun Verma',
+          phone: '+91 9876543221',
+        },
+        'cloud-computing-workshop': {
+          coordinator: 'Harish Kumar',
+          phone: '+91 9876543222',
+        },
+        'football-tournament': {
+          coordinator: 'Mithun Singh',
+          phone: '+91 9876543223',
+        },
+        'web-dev-workshop': {
+          coordinator: 'Rishab Malhotra',
+          phone: '+91 9876543224',
+        },
+        'mental-health-awareness': {
+          coordinator: 'Dr. Anjana Nair',
+          phone: '+91 9876543225',
+        },
+        'blockchain-conference': {
+          coordinator: 'Karan Patel',
+          phone: '+91 9876543226',
+        },
+        'cricket-tournament': {
+          coordinator: 'Sushant Gupta',
+          phone: '+91 9876543227',
+        },
+      }
+
+      let rawEvents = JSON.parse(localStorage.getItem('events')) || []
+      const events = rawEvents.map((e) => {
+        const fallback = initialEventsLookup[e.id] || {}
+        return {
+          id: e.id,
+          name: e.name || e.title || 'Untitled Event',
+          location: e.location || e.city || 'Unknown',
+          date: e.date || 'TBD',
+          type: e.category
+            ? e.category
+            : e.type === 'team' || e.type === 'individual'
+              ? 'General'
+              : e.type || 'General',
+          teamType: e.teamType
+            ? e.teamType
+            : e.type === 'team' || e.type === 'individual'
+              ? e.type
+              : 'individual',
+          students: parseInt(e.students) || 150,
+          college: e.college || 'Unknown College',
+          venue: e.venue || 'TBD',
+          organizer: e.organizer || 'Unknown Organizer',
+          coordinator:
+            e.coordinator && e.coordinator !== 'N/A'
+              ? e.coordinator
+              : fallback.coordinator || 'N/A',
+          phone:
+            e.phone && e.phone !== 'N/A' ? e.phone : fallback.phone || 'N/A',
+          desc: e.desc || e.description || 'No description provided.',
+          image:
+            e.image ||
+            `https://picsum.photos/500/300?random=${e.id || Math.floor(Math.random() * 1000)}`,
+        }
+      })
+
+      const userInfo = JSON.parse(sessionStorage.getItem('userInfo') || localStorage.getItem('userInfo'));
+      const bookmarkKey = userInfo ? `bookmarks_${userInfo.email || userInfo.id}` : 'bookmarks_guest';
+
+      const state = {
+        bookmarked: new Set(
+          JSON.parse(localStorage.getItem(bookmarkKey) || '[]'),
+        ),
+      }
+
+      function formatDate(dateString) {
+        const options = {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }
+        const date = new Date(dateString)
+        return isNaN(date.getTime())
+          ? dateString
+          : date.toLocaleDateString(undefined, options)
+      }
+
+      function loadEventDetails() {
+        const params = new URLSearchParams(window.location.search)
+        const eventId = params.get('id')
+        if (!eventId) {
+          document.getElementById('eventContent').innerHTML =
+            '<p class="error-message">Event ID not found. <a href="events.html">Go back to events</a></p>'
+          return
+        }
+
+        const event = events.find((e) => String(e.id) === String(eventId))
+        if (!event) {
+          document.getElementById('eventContent').innerHTML =
+            '<p class="error-message">Event not found. <a href="events.html">Go back to events</a></p>'
+          return
+        }
+
+        const isBookmarked = state.bookmarked.has(eventId)
+
+        const html = `
+          <div class="event-card">
+            <div class="event-hero-wrapper">
+              <img src="${event.image}" alt="${event.name}" class="event-hero" onerror="this.src='https://via.placeholder.com/1200x600?text=Event+Image'" />
+              <div class="category-badge">${event.type}</div>
+            </div>
+            
+            <div class="event-content">
+              <div class="event-header">
+                <h1>${event.name}</h1>
+                <div class="event-meta">
+                  <div class="meta-item"><i class="fas fa-university"></i> ${event.college}</div>
+                  <div class="meta-item"><i class="fas fa-map-marker-alt"></i> ${event.venue}, ${event.location}</div>
+                  <div class="meta-item"><i class="fas fa-users"></i> ${event.teamType === 'team' ? 'Team Event' : 'Individual'}</div>
+                </div>
+              </div>
+
+              <div class="section-grid">
+                <div class="description-section">
+                  <h2>About the Event</h2>
+                  <p>${event.desc}</p>
+                </div>
+
+                <div class="info-sidebar">
+                  <div class="info-card">
+                    <h3><i class="fas fa-clock"></i> Date & Time</h3>
+                    <p style="margin:0; font-weight:600; color:var(--gray-800)">${formatDate(event.date)}</p>
+                  </div>
+
+                  <div class="info-card">
+                    <h3><i class="fas fa-id-card"></i> Coordinator Details</h3>
+                    <div class="contact-details">
+                      <div class="contact-row">
+                        <div class="contact-icon"><i class="fas fa-user-tie"></i></div>
+                        <div class="contact-info">
+                          <span>Name</span>
+                          <p>${event.coordinator}</p>
+                        </div>
+                      </div>
+                      <div class="contact-row">
+                        <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+                        <div class="contact-info">
+                          <span>Contact</span>
+                          <p>${event.phone}</p>
+                        </div>
+                      </div>
+                      <a href="tel:${event.phone}" class="btn-call">
+                        <i class="fas fa-phone"></i> Call Coordinator
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="info-card">
+                    <h3><i class="fas fa-shield-alt"></i> Organized By</h3>
+                    <p style="margin:0; font-weight:600; color:var(--gray-800)">${event.organizer}</p>
+                  </div>
+                </div>
+
+                <div class="action-buttons">
+                  <a href="register.html?id=${event.id}" class="btn btn-register">
+                    <i class="fas fa-ticket-alt"></i> Register Now
+                  </a>
+                  <button class="btn btn-bookmark ${isBookmarked ? 'bookmarked' : ''}" id="bookmarkBtn">
+                    <i class="fas ${isBookmarked ? 'fa-bookmark' : 'fa-plus'}"></i>
+                    ${isBookmarked ? 'Bookmarked' : 'Bookmark'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+
+        document.getElementById('eventContent').innerHTML = html
+
+        document.getElementById('bookmarkBtn').addEventListener('click', () => {
+          if (state.bookmarked.has(eventId)) state.bookmarked.delete(eventId)
+          else state.bookmarked.add(eventId)
+          localStorage.setItem(
+            bookmarkKey,
+            JSON.stringify(Array.from(state.bookmarked)),
+          )
+          loadEventDetails()
+        })
+      }
+
+      window.addEventListener('DOMContentLoaded', loadEventDetails)
+      
+    </script>
+      <script src="global-theme.js"></script>
+  </body>
+</html>

@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar - College Event Management</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="main-nav container">
+        <a class="logo" href="index.html">College Events</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="calendar.html" class="active">Calendar</a></li>
+          <li><a href="notifications.html">Notifications</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="signup.html">Sign Up</a>
+          <a class="btn btn-secondary" href="login-selection.html">Login</a>
+          <button
+            class="btn btn-secondary logout-btn"
+            onclick="logout()"
+            style="display: none"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="section container">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 2rem;">
+          <h2 class="section-title" style="margin: 0;">Event Calendar</h2>
+          <button class="btn btn-ai" onclick="openAIItineraryModal()" style="padding: 10px 18px; border-radius: 100px; cursor: pointer;">
+            <i class="fas fa-wand-magic-sparkles"></i> AI Itinerary Planner
+          </button>
+        </div>
+
+        <!-- AI Itinerary Modal -->
+        <div id="aiItineraryModal" class="ai-itinerary-modal" style="display:none;">
+          <div class="ai-itinerary-header">
+            <h3 class="ai-itinerary-title"><i class="fas fa-calendar-check"></i> AI Smart Itinerary</h3>
+            <button class="ai-itinerary-close" onclick="document.getElementById('aiItineraryModal').style.display='none'">&times;</button>
+          </div>
+          <p class="ai-itinerary-description">AI has generated a non-overlapping, optimized daily agenda for your registered & bookmarked events.</p>
+          
+          <div id="itineraryList" class="ai-itinerary-list">
+            <!-- Dynamic Content -->
+          </div>
+
+          <button onclick="alert('Itinerary synced with your Google Calendar & Notification Reminders!')" class="btn btn-primary ai-itinerary-action">
+            <i class="fas fa-sync"></i> Sync with Calendar & Reminders
+          </button>
+        </div>
+
+        <script>
+          async function openAIItineraryModal() {
+            const modal = document.getElementById('aiItineraryModal');
+            const list = document.getElementById('itineraryList');
+            modal.style.display = 'block';
+            list.innerHTML = '<p style="text-align:center; font-size:0.85rem; color:#94a3b8;">✨ AI constructing conflict-free schedule...</p>';
+            
+            if (window.AIServices) {
+              const items = window.AIServices.planItinerary();
+              list.innerHTML = '';
+              items.forEach(item => {
+                list.innerHTML += `
+                  <div class="ai-itinerary-card">
+                    <div class="ai-itinerary-card-header">
+                      <strong>${item.event}</strong>
+                      <span class="ai-badge">${item.time}</span>
+                    </div>
+                    <div class="ai-itinerary-location"><i class="fas fa-map-marker-alt"></i> ${item.location}</div>
+                    <div class="ai-itinerary-tip">💡 ${item.tip}</div>
+                  </div>
+                `;
+              });
+            }
+          }
+        </script>
+
+        <div class="calendar fade-in" style="margin-top: 2rem">
+          <div class="calendar-header">
+            <button class="btn btn-secondary" style="border: none">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <h3 style="font-size: 1.5rem">April 2026</h3>
+            <button class="btn btn-secondary" style="border: none">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="calendar-weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+          </div>
+
+          <div class="calendar-days">
+            <div class="calendar-day" style="opacity: 0.5">29</div>
+            <div class="calendar-day" style="opacity: 0.5">30</div>
+            <div class="calendar-day" style="opacity: 0.5">31</div>
+            <div class="calendar-day">1</div>
+            <div class="calendar-day">2</div>
+            <div class="calendar-day">3</div>
+            <div class="calendar-day">4</div>
+
+            <div class="calendar-day">5</div>
+            <div class="calendar-day">6</div>
+            <div class="calendar-day">7</div>
+            <div class="calendar-day">8</div>
+            <div class="calendar-day">9</div>
+            <div class="calendar-day">10</div>
+            <div class="calendar-day">11</div>
+
+            <div class="calendar-day">12</div>
+            <div class="calendar-day">13</div>
+            <div class="calendar-day">14</div>
+            <div class="calendar-day has-events today">
+              <span style="font-weight: bold">15</span>
+              <div
+                style="
+                  margin-top: 0.5rem;
+                  font-size: 0.8rem;
+                  background: var(--primary-color);
+                  color: white;
+                  padding: 2px 4px;
+                  border-radius: 0;
+                "
+              >
+                Tech Symposium
+              </div>
+            </div>
+            <div class="calendar-day">16</div>
+            <div class="calendar-day">17</div>
+            <div class="calendar-day">18</div>
+
+            <div class="calendar-day">19</div>
+            <div class="calendar-day">20</div>
+            <div class="calendar-day">21</div>
+            <div class="calendar-day has-events">
+              <span style="font-weight: bold">22</span>
+              <div
+                style="
+                  margin-top: 0.5rem;
+                  font-size: 0.8rem;
+                  background: var(--accent-color);
+                  color: white;
+                  padding: 2px 4px;
+                  border-radius: 0;
+                "
+              >
+                Cultural Night
+              </div>
+            </div>
+            <div class="calendar-day">23</div>
+            <div class="calendar-day">24</div>
+            <div class="calendar-day">25</div>
+
+            <div class="calendar-day">26</div>
+            <div class="calendar-day">27</div>
+            <div class="calendar-day">28</div>
+            <div class="calendar-day">29</div>
+            <div class="calendar-day">30</div>
+            <div class="calendar-day" style="opacity: 0.5">1</div>
+            <div class="calendar-day" style="opacity: 0.5">2</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-columns">
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-university"></i> College Event Management</p>
+            <p>
+              <i class="fas fa-map-marker-alt"></i> 123 University Ave, Campus
+              City
+            </p>
+            <p>
+              <i class="fas fa-envelope"></i>
+              <a href="mailto:events@college.edu" class="contact-link"
+                >events@college.edu</a
+              >
+            </p>
+            <p>
+              <i class="fas fa-phone"></i>
+              <a href="tel:+15551234567" class="contact-link"
+                >+1 (555) 123-4567</a
+              >
+            </p>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="events.html">Events</a></li>
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Student Portal</h3>
+            <ul>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="profile.html">My Profile</a></li>
+              <li><a href="login.html">Student Login</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Support & Admin</h3>
+            <ul>
+              <li><a href="admin-login.html">Admin Portal</a></li>
+              <li><a href="404errorpage.html">404 Error Page</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="privacy-policy.html">Privacy Policy</a></li>
+              <li><a href="terms-of-service.html">Terms of Service</a></li>
+            </ul>
+            <div class="footer-social" style="margin-top: 1.5rem">
+              <ul class="social-links">
+                <li>
+                  <a
+                    href="https://facebook.com/collegeeventmanagement"
+                    aria-label="Facebook"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://twitter.com/collegeevents"
+                    aria-label="Twitter"
+                    ><i class="fab fa-twitter"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://instagram.com/collegeevents"
+                    aria-label="Instagram"
+                    ><i class="fab fa-instagram"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://linkedin.com/company/college-event-management"
+                    aria-label="LinkedIn"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-newsletter-section">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 1rem;
+            "
+          >
+            <div style="flex: 1; min-width: 300px">
+              <h4>Subscribe to our Newsletter</h4>
+              <p>
+                Get latest event updates and announcements directly in your
+                inbox.
+              </p>
+            </div>
+            <form class="footer-newsletter-form" action="#" method="post">
+              <input
+                id="footer-email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                required
+              />
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>&copy; 2026 College Event Management. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      let currentDate = new Date(2026, 3, 15); // April 15, 2026
+
+      // Event data for all months
+      const allEvents = {
+        "2026-0": [
+          // January 2026
+          {
+            day: 5,
+            name: "New Year Orientation",
+            color: "var(--primary-color)",
+          },
+          { day: 15, name: "Sports Day", color: "var(--accent-color)" },
+          {
+            day: 28,
+            name: "Club Recruitment",
+            color: "var(--secondary-color)",
+          },
+        ],
+        "2026-1": [
+          // February 2026
+          { day: 6, name: "Valentine's Week", color: "var(--accent-color)" },
+          { day: 14, name: "Love Fest 2026", color: "var(--primary-color)" },
+          { day: 20, name: "Film Festival", color: "var(--secondary-color)" },
+        ],
+        "2026-2": [
+          // March 2026
+          { day: 8, name: "Women's Day Event", color: "var(--primary-color)" },
+          { day: 17, name: "Holi Celebration", color: "var(--accent-color)" },
+          {
+            day: 25,
+            name: "Debate Competition",
+            color: "var(--secondary-color)",
+          },
+        ],
+        "2026-3": [
+          // April 2026
+          {
+            day: 5,
+            name: "Science Exhibition",
+            color: "var(--secondary-color)",
+          },
+          { day: 15, name: "Tech Symposium", color: "var(--primary-color)" },
+          { day: 22, name: "Cultural Night", color: "var(--accent-color)" },
+        ],
+        "2026-4": [
+          // May 2026
+          { day: 1, name: "Labour Day Fest", color: "var(--primary-color)" },
+          { day: 12, name: "Music Fest", color: "var(--accent-color)" },
+          { day: 30, name: "Farewell Party", color: "var(--secondary-color)" },
+        ],
+        "2026-5": [
+          // June 2026
+          { day: 5, name: "Summer Camp", color: "var(--primary-color)" },
+          { day: 15, name: "Workshop Series", color: "var(--secondary-color)" },
+          { day: 21, name: "Yoga Day Event", color: "var(--accent-color)" },
+        ],
+        "2026-6": [
+          // July 2026
+          { day: 4, name: "Independence Prep", color: "var(--accent-color)" },
+          { day: 15, name: "Leadership Summit", color: "var(--primary-color)" },
+          { day: 28, name: "Art Exhibition", color: "var(--secondary-color)" },
+        ],
+        "2026-7": [
+          // August 2026
+          { day: 6, name: "Independence Day", color: "var(--primary-color)" },
+          {
+            day: 15,
+            name: "Teacher's Appreciation",
+            color: "var(--accent-color)",
+          },
+          {
+            day: 22,
+            name: "Gaming Tournament",
+            color: "var(--secondary-color)",
+          },
+        ],
+        "2026-8": [
+          // September 2026
+          { day: 5, name: "New Academic Year", color: "var(--primary-color)" },
+          { day: 16, name: "Hindi Divas", color: "var(--accent-color)" },
+          {
+            day: 24,
+            name: "Code Competition",
+            color: "var(--secondary-color)",
+          },
+        ],
+        "2026-9": [
+          // October 2026
+          { day: 2, name: "Gandhi Jayanti", color: "var(--primary-color)" },
+          { day: 10, name: "Diwali Celebration", color: "var(--accent-color)" },
+          { day: 20, name: "Halloween Party", color: "var(--secondary-color)" },
+        ],
+        "2026-10": [
+          // November 2026
+          {
+            day: 8,
+            name: "Thanksgiving Fest",
+            color: "var(--secondary-color)",
+          },
+          { day: 15, name: "Career Fair", color: "var(--primary-color)" },
+          { day: 25, name: "Alumni Meet", color: "var(--accent-color)" },
+        ],
+        "2026-11": [
+          // December 2026
+          { day: 5, name: "Christmas Prep", color: "var(--accent-color)" },
+          { day: 15, name: "Year End Fest", color: "var(--primary-color)" },
+          {
+            day: 25,
+            name: "Christmas Celebration",
+            color: "var(--secondary-color)",
+          },
+        ],
+      };
+
+      function updateCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        // Update header
+        const monthNames = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+        document.querySelector(".calendar-header h3").textContent =
+          monthNames[month] + " " + year;
+
+        // Get first day of month and number of days
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+        // Create days array
+        const daysArray = [];
+
+        // Previous month's days
+        for (let i = firstDay - 1; i >= 0; i--) {
+          daysArray.push({ day: daysInPrevMonth - i, isCurrentMonth: false });
+        }
+
+        // Current month's days
+        for (let i = 1; i <= daysInMonth; i++) {
+          daysArray.push({ day: i, isCurrentMonth: true });
+        }
+
+        // Next month's days
+        const remainingDays = 42 - daysArray.length; // 6 weeks * 7 days
+        for (let i = 1; i <= remainingDays; i++) {
+          daysArray.push({ day: i, isCurrentMonth: false });
+        }
+
+        // Update calendar days
+        const daysContainer = document.querySelector(".calendar-days");
+        daysContainer.innerHTML = "";
+
+        daysArray.forEach((item, index) => {
+          const dayElement = document.createElement("div");
+          dayElement.className = "calendar-day";
+          if (!item.isCurrentMonth) {
+            dayElement.style.opacity = "0.5";
+            dayElement.style.cursor = "pointer";
+          }
+
+          // Add today's highlight if applicable
+          const today = new Date();
+          if (
+            item.isCurrentMonth &&
+            item.day === today.getDate() &&
+            year === today.getFullYear() &&
+            month === today.getMonth()
+          ) {
+            dayElement.classList.add("today");
+          }
+
+          dayElement.textContent = item.day;
+
+          // Add click handler for non-current month dates
+          if (!item.isCurrentMonth) {
+            dayElement.addEventListener("click", function () {
+              if (index < firstDay) {
+                // Previous month date clicked
+                currentDate.setMonth(currentDate.getMonth() - 1);
+              } else {
+                // Next month date clicked
+                currentDate.setMonth(currentDate.getMonth() + 1);
+              }
+              updateCalendar();
+            });
+          }
+
+          daysContainer.appendChild(dayElement);
+        });
+
+        // Get events for current month
+        const monthKey = year + "-" + month;
+        const monthEvents = allEvents[monthKey] || [];
+
+        // Add event indicators
+        if (monthEvents.length > 0) {
+          const days = daysContainer.querySelectorAll(".calendar-day");
+          monthEvents.forEach((event) => {
+            const dayIndex = event.day - 1 + firstDay; // Adjust for the first day of the month
+            if (dayIndex >= 0 && dayIndex < days.length) {
+              const dayElement = days[dayIndex];
+              dayElement.classList.add("has-events");
+              dayElement.innerHTML = `<span style="font-weight: bold;">${event.day}</span>
+              <div style="margin-top: 0.5rem; font-size: 0.8rem; background: ${event.color}; color: white; padding: 2px 4px; border-radius: 0;">${event.name}</div>`;
+            }
+          });
+        }
+      }
+
+      // Event listeners for navigation buttons
+      document
+        .querySelectorAll(".calendar-header button")
+        .forEach((button, index) => {
+          button.addEventListener("click", function () {
+            if (index === 0) {
+              // Previous month
+              currentDate.setMonth(currentDate.getMonth() - 1);
+            } else {
+              // Next month
+              currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+            updateCalendar();
+          });
+        });
+
+      // Initialize calendar on page load
+      updateCalendar();
+
+    </script>
+      <script src="global-theme.js"></script>
+  </body>
+</html>

@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Page not found - College Event Management System"
+    />
+    <title>404 - Page Not Found | College Event Management</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Font Awesome Icons (CDN) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* Additional styles specific to 404 page */
+      .error-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+      }
+
+      .error-container::before {
+        content: "";
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 1px,
+          transparent 1px
+        );
+        background-size: 50px 50px;
+        animation: float 20s linear infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50px, -50px) rotate(360deg);
+        }
+      }
+
+      .error-content {
+        text-align: center;
+        color: white;
+        z-index: 1;
+        animation: fadeInUp 0.8s ease-out;
+        max-width: 90%;
+        padding: var(--spacing-xl);
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .error-code {
+        font-size: 8rem;
+        font-weight: 800;
+        margin-bottom: var(--spacing-md);
+        text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .error-title {
+        font-size: 2.5rem;
+        margin-bottom: var(--spacing-lg);
+        font-weight: 700;
+      }
+
+      .error-message {
+        font-size: 1.2rem;
+        margin-bottom: var(--spacing-xl);
+        opacity: 0.9;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .error-actions {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .error-btn {
+        padding: var(--spacing-md) var(--spacing-xl);
+        border-radius: 0;
+        font-weight: 600;
+        transition: all var(--transition-normal);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        text-decoration: none;
+      }
+
+      .error-btn-primary {
+        background: white;
+        color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+      }
+
+      .error-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+        background: var(--light-color);
+      }
+
+      .error-btn-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .error-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-3px);
+      }
+
+      .suggestions {
+        margin-top: var(--spacing-xl);
+        padding-top: var(--spacing-xl);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .suggestions h3 {
+        font-size: 1.3rem;
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .suggestion-links {
+        display: flex;
+        gap: var(--spacing-lg);
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .suggestion-link {
+        color: white;
+        text-decoration: none;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: 0;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all var(--transition-normal);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+      }
+
+      .suggestion-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(5px);
+      }
+
+      .animated-icon {
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .search-form {
+        margin: var(--spacing-xl) auto 0;
+        max-width: 500px;
+        display: flex;
+        gap: var(--spacing-sm);
+      }
+
+      .search-input {
+        flex: 1;
+        padding: var(--spacing-md);
+        border: none;
+        border-radius: 0;
+        font-size: var(--text-md);
+        outline: none;
+        transition: all var(--transition-normal);
+      }
+
+      .search-input:focus {
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+      }
+
+      .search-btn {
+        padding: var(--spacing-md) var(--spacing-xl);
+        background: white;
+        border: none;
+        border-radius: 0;
+        color: var(--primary-color);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+      }
+
+      .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      @media (max-width: 768px) {
+        .error-code {
+          font-size: 5rem;
+        }
+
+        .error-title {
+          font-size: 1.8rem;
+        }
+
+        .error-message {
+          font-size: 1rem;
+        }
+
+        .error-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .error-btn {
+          width: 100%;
+          max-width: 250px;
+          justify-content: center;
+        }
+
+        .suggestion-links {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .suggestion-link {
+          width: 100%;
+          max-width: 200px;
+          justify-content: center;
+        }
+
+        .search-form {
+          flex-direction: column;
+        }
+      }
+
+      /* Dark mode override for 404 page */
+      body.dark-mode .error-container {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="main-nav container">
+        <a class="logo" href="index.html">College Events</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="notifications.html">Notifications</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="signup.html">Sign Up</a>
+          <a class="btn btn-secondary" href="login-selection.html">Login</a>
+          <button
+            class="btn btn-secondary logout-btn"
+            onclick="logout()"
+            style="display: none"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+    </header>
+    <div class="error-container">
+      <div class="error-content">
+        <!-- 404 Animation -->
+        <div class="error-code">
+          4<i class="fas fa-exclamation-circle animated-icon"></i>4
+        </div>
+
+        <h1 class="error-title">Oops! Page Not Found</h1>
+
+        <p class="error-message">
+          The page you are looking for might have been removed, had its name
+          changed, or is temporarily unavailable. But don't worry, we've got
+          plenty of exciting events waiting for you!
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="error-actions">
+          <a href="index.html" class="error-btn error-btn-secondary">
+            <i class="fas fa-home"></i> Back to Home
+          </a>
+          <a href="events.html" class="error-btn error-btn-secondary">
+            <i class="fas fa-calendar-alt"></i> Explore Events
+          </a>
+          <button onclick="goBack()" class="error-btn error-btn-secondary">
+            <i class="fas fa-arrow-left"></i> Go Back
+          </button>
+        </div>
+
+        <!-- Fun Fact -->
+        <div
+          style="margin-top: var(--spacing-xl); font-size: 0.9rem; opacity: 0.7"
+        >
+          <i class="fas fa-smile"></i> Fun Fact: Our next big event is just
+          around the corner!
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Go back function with history check
+      function goBack() {
+        if (document.referrer && document.referrer !== "") {
+          window.history.back();
+        } else {
+          window.location.href = "index.html";
+        }
+      }
+
+      // Handle search functionality
+      function handleSearch(event) {
+        event.preventDefault();
+        const searchQuery = document.getElementById("searchInput").value.trim();
+        if (searchQuery) {
+          // Redirect to events page with search parameter
+          window.location.href = `events.html?search=${encodeURIComponent(searchQuery)}`;
+        } else {
+          // Show alert if empty search
+          alert("Please enter a search term to find events!");
+        }
+      }
+
+      // Add keyboard shortcut (Enter key on search input)
+      document
+        .getElementById("searchInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            handleSearch(e);
+          }
+        });
+
+      // Check for dark mode preference
+      if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark-mode");
+      }
+
+      // Log 404 error for analytics (optional)
+      console.log("404 Error: Page not found - " + window.location.pathname);
+
+      // Track 404 error (if you have analytics)
+      if (typeof gtag !== "undefined") {
+        gtag("event", "404_error", {
+          page_path: window.location.pathname,
+          page_title: document.title,
+        });
+      }
+
+      // Animated background effect for error code
+      const errorCode = document.querySelector(".error-code");
+      if (errorCode) {
+        setInterval(() => {
+          errorCode.style.transform = "scale(1.02)";
+          setTimeout(() => {
+            errorCode.style.transform = "scale(1)";
+          }, 200);
+        }, 3000);
+      }
+
+      // Add floating animation to icons
+      const icons = document.querySelectorAll(".animated-icon");
+      icons.forEach((icon, index) => {
+        icon.style.animationDelay = `${index * 0.5}s`;
+      });
+    </script>
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-columns">
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-university"></i> College Event Management</p>
+            <p>
+              <i class="fas fa-map-marker-alt"></i> 123 University Ave, Campus
+              City
+            </p>
+            <p>
+              <i class="fas fa-envelope"></i>
+              <a href="mailto:events@college.edu" class="contact-link"
+                >events@college.edu</a
+              >
+            </p>
+            <p>
+              <i class="fas fa-phone"></i>
+              <a href="tel:+15551234567" class="contact-link"
+                >+1 (555) 123-4567</a
+              >
+            </p>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="events.html">Events</a></li>
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Student Portal</h3>
+            <ul>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="profile.html">My Profile</a></li>
+              <li><a href="login.html">Student Login</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Support & Admin</h3>
+            <ul>
+              <li><a href="admin-login.html">Admin Portal</a></li>
+              <li><a href="404errorpage.html">404 Error Page</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="privacy-policy.html">Privacy Policy</a></li>
+              <li><a href="terms-of-service.html">Terms of Service</a></li>
+            </ul>
+            <div class="footer-social" style="margin-top: 1.5rem">
+              <ul class="social-links">
+                <li>
+                  <a
+                    href="https://facebook.com/collegeeventmanagement"
+                    aria-label="Facebook"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://twitter.com/collegeevents"
+                    aria-label="Twitter"
+                    ><i class="fab fa-twitter"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://instagram.com/collegeevents"
+                    aria-label="Instagram"
+                    ><i class="fab fa-instagram"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://linkedin.com/company/college-event-management"
+                    aria-label="LinkedIn"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-newsletter-section">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 1rem;
+            "
+          >
+            <div style="flex: 1; min-width: 300px">
+              <h4>Subscribe to our Newsletter</h4>
+              <p>
+                Get latest event updates and announcements directly in your
+                inbox.
+              </p>
+            </div>
+            <form class="footer-newsletter-form" action="#" method="post">
+              <input
+                id="footer-email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                required
+              />
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>&copy; 2026 College Event Management. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="global-theme.js"></script>
+  </body>
+</html>

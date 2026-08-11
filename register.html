@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EventHub • smart registration</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+      }
+
+      body {
+        background: linear-gradient(145deg, #f6f9fc 0%, #edf2f9 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+
+      .register-card {
+        max-width: 1100px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(12px);
+        border-radius: 2.5rem;
+        box-shadow:
+          0 30px 60px rgba(0, 10, 30, 0.12),
+          0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 2.2rem;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        gap: 2.2rem;
+        align-items: start;
+      }
+
+      .event-preview {
+        background: white;
+        border-radius: 2rem;
+        padding: 1.8rem;
+        box-shadow: 0 12px 25px -8px rgba(0, 35, 70, 0.1);
+        border: 1px solid rgba(230, 240, 255, 0.8);
+      }
+
+      .preview-img {
+        width: 100%;
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 1.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        box-shadow: 0 12px 18px -10px #14204750;
+        margin-bottom: 1.8rem;
+        position: relative;
+        overflow: hidden;
+        background-color: #e2e8f0;
+      }
+
+      .preview-img i {
+        filter: drop-shadow(0 8px 12px #00000030);
+        opacity: 0.6;
+      }
+
+      .event-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #121f4b, #20316b);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.8rem;
+      }
+
+      .event-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        margin: 1.5rem 0 0.5rem;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 1rem;
+        color: #1e2f50;
+      }
+
+      .meta-item i {
+        width: 24px;
+        color: #2f4b9e;
+        font-size: 1.15rem;
+      }
+
+      .organizer-badge {
+        background: #e8eeff;
+        padding: 0.4rem 1rem;
+        border-radius: 100px;
+        font-weight: 500;
+        color: #1b2f66;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .form-section {
+        background: white;
+        border-radius: 2rem;
+        padding: 1.8rem 2rem;
+        box-shadow: 0 12px 28px -10px rgba(0, 30, 70, 0.12);
+        border: 1px solid #ffffff;
+      }
+
+      .form-section h2 {
+        font-size: 1.6rem;
+        font-weight: 650;
+        color: #0c1b3b;
+        margin-bottom: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .input-group {
+        margin-bottom: 1.2rem;
+        position: relative;
+      }
+
+      .input-group i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #4863b3;
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .input-group input,
+      .input-group select {
+        width: 100%;
+        padding: 0.9rem 1rem 0.9rem 2.8rem;
+        border: 1.5px solid #e2eaf2;
+        border-radius: 60px;
+        font-size: 0.95rem;
+        background: #fbfdff;
+        transition: 0.18s;
+        outline: none;
+        color: #142849;
+      }
+
+      .input-group select {
+        appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%234863b3" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 1.2rem center;
+      }
+
+      .input-group input:focus,
+      .input-group select:focus {
+        border-color: #3355b0;
+        background: white;
+        box-shadow: 0 0 0 4px #dae4fd;
+      }
+
+      .row-duo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+      }
+
+      .checkbox-group,
+      .file-upload {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 1.4rem 0 1.2rem;
+        background: #f5faff;
+        padding: 0.8rem 1.2rem;
+        border-radius: 60px;
+      }
+
+      .checkbox-group input[type='checkbox'] {
+        width: 20px;
+        height: 20px;
+        accent-color: #1d3d8a;
+        margin: 0;
+      }
+
+      .file-upload {
+        background: #f2f6fd;
+        border: 1.5px dashed #9bb1d9;
+        border-radius: 50px;
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+      }
+
+      .file-upload i {
+        font-size: 1.3rem;
+        color: #2c4b9a;
+      }
+
+      #idProofFile {
+        display: none;
+      }
+
+      .progress-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin: 1.8rem 0 1rem;
+        counter-reset: step;
+      }
+
+      .progress-step {
+        flex: 1;
+        text-align: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #8296bb;
+        position: relative;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+
+      .progress-step.active {
+        color: #173177;
+      }
+
+      .progress-step.completed {
+        color: #0f7b3a;
+      }
+
+      .progress-step::before {
+        content: counter(step);
+        counter-increment: step;
+        display: block;
+        width: 30px;
+        height: 30px;
+        background: #dae2f0;
+        border-radius: 50%;
+        margin: 0 auto 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #1e3265;
+        transition: 0.2s;
+      }
+
+      .progress-step.active::before {
+        background: #173177;
+        color: white;
+        box-shadow: 0 4px 10px #17317780;
+      }
+
+      .progress-step.completed::before {
+        background: #0f7b3a;
+        color: white;
+        content: '✓';
+        font-size: 1.2rem;
+      }
+
+      .progress-step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        width: 70%;
+        height: 3px;
+        background: #dbe2f0;
+        left: 60%;
+        top: 13px;
+        z-index: 0;
+      }
+
+      .btn-submit {
+        background: linear-gradient(115deg, #152c64, #213b82);
+        border: none;
+        padding: 1rem 1.8rem;
+        border-radius: 60px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        margin: 1.8rem 0 0.5rem;
+        box-shadow: 0 12px 22px -12px #1b368b;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .btn-submit:hover:not(:disabled) {
+        background: linear-gradient(115deg, #1e3780, #2b49a8);
+        transform: scale(1.01);
+      }
+
+      .verification-step {
+        display: none;
+        background: #f8faff;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        margin: 1.2rem 0;
+        border: 2px solid #e0e9ff;
+      }
+
+      .verification-step.show {
+        display: block;
+        animation: slideIn 0.4s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .verification-details {
+        background: white;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed #dee6f5;
+      }
+
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        color: #546e9b;
+        font-weight: 500;
+      }
+
+      .detail-value {
+        color: #142849;
+        font-weight: 600;
+      }
+
+      .success-overlay {
+        display: none;
+        background: white;
+        border-radius: 2rem;
+        padding: 1.8rem;
+        text-align: center;
+        margin-top: 1.2rem;
+        border: 2px solid #1eac6b;
+      }
+
+      .success-overlay.show {
+        display: block;
+        animation: fadePop 0.5s;
+      }
+
+      @keyframes fadePop {
+        0% {
+          opacity: 0;
+          transform: scale(0.85);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .qr-ticket {
+        background: #f4f7fc;
+        border-radius: 1.5rem;
+        padding: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 0.8rem;
+      }
+
+      .qr-placeholder {
+        background: white;
+        padding: 0.5rem 1rem 0.5rem 0.8rem;
+        border-radius: 60px;
+        font-family: monospace;
+        font-weight: 600;
+        color: #142849;
+        border: 1px dashed #324f9b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .error-border {
+        border-color: #c62828 !important;
+        background: #fff7f7;
+      }
+
+      .error-message {
+        color: #c62828;
+        font-size: 0.75rem;
+        margin-top: 0.2rem;
+        margin-left: 1rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .action-buttons button {
+        flex: 1;
+      }
+
+      .btn-verify {
+        background: linear-gradient(115deg, #1d5e3f, #1e7e4e);
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 60px;
+        font-size: 1rem;
+        font-weight: 500;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .btn-verify:hover {
+        transform: scale(1.02);
+      }
+
+      .btn-edit {
+        background: linear-gradient(115deg, #64748b, #475569) !important;
+      }
+
+      .btn-edit:hover {
+        background: linear-gradient(115deg, #4b5565, #334155) !important;
+      }
+
+      .btn-confirm {
+        background: linear-gradient(115deg, #1d5e3f, #1e7e4e) !important;
+      }
+
+      .btn-confirm:hover {
+        background: linear-gradient(115deg, #166b41, #1b8b54) !important;
+      }
+
+      .team-members-section {
+        background: #f8faff;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        border: 1px solid #e0e9ff;
+      }
+
+      .team-member-card {
+        background: white;
+        border-radius: 0.8rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #e2eaf2;
+      }
+
+      .team-member-title {
+        font-weight: 600;
+        color: #2d479b;
+        margin-bottom: 0.8rem;
+        font-size: 0.9rem;
+      }
+
+      .team-member-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .team-field {
+        position: relative;
+      }
+
+      .team-field i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #4863b3;
+      }
+
+      .team-field input {
+        width: 100%;
+        padding: 0.7rem 1rem 0.7rem 2.2rem;
+        border: 1.5px solid #e2eaf2;
+        border-radius: 50px;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 800px) {
+        .grid-container {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+        .register-card {
+          padding: 1.2rem;
+        }
+        .team-member-fields {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-card">
+      <div class="grid-container">
+        <div class="event-preview" id="eventPreview">
+          <div class="preview-img" id="previewImage">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <div class="event-title" id="eventTitle">Loading...</div>
+          <div class="event-meta">
+            <div class="meta-item" id="eventDate">
+              <i class="fas fa-calendar-alt"></i> <span>Loading...</span>
+            </div>
+            <div class="meta-item" id="eventVenue">
+              <i class="fas fa-map-pin"></i> <span>Loading...</span>
+            </div>
+            <div class="organizer-badge" id="eventOrganizer">
+              <i class="fas fa-users"></i> Organizer: <span>Loading...</span>
+            </div>
+          </div>
+          <hr style="margin: 1.2rem 0; border: 1px solid #e2ecfe" />
+          <div
+            style="display: flex; gap: 8px; color: #2b468b; font-size: 0.9rem"
+            id="eventTypeDisplay"
+          >
+            <i class="fas fa-ticket-alt"></i>
+            <span>Loading...</span>
+          </div>
+          <div
+            style="
+              margin-top: 1.2rem;
+              background: #f1f7ff;
+              border-radius: 30px;
+              padding: 0.4rem 1rem;
+              color: #021c44;
+            "
+          >
+            <i class="fas fa-star"></i> you are registering for
+            <strong id="previewEventName">this event</strong>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2><i class="fas fa-pen"></i> Registration form</h2>
+
+          <div class="progress-indicator">
+            <span class="progress-step active" id="step1">details</span>
+            <span class="progress-step" id="step2">verify</span>
+            <span class="progress-step" id="step3">ticket</span>
+          </div>
+
+          <form id="registerForm">
+            <div class="input-group">
+              <i class="fas fa-user-graduate"></i>
+              <input
+                type="text"
+                id="fullName"
+                placeholder="Full name (as in ID)"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <i class="fas fa-university"></i>
+              <input
+                type="text"
+                id="collegeName"
+                placeholder="College / University name"
+                required
+              />
+            </div>
+            <div class="row-duo">
+              <div class="input-group">
+                <i class="fas fa-id-card"></i>
+                <input
+                  type="text"
+                  id="regNumber"
+                  placeholder="Register number"
+                  required
+                />
+              </div>
+              <div class="input-group">
+                <i class="fas fa-building"></i>
+                <input
+                  type="text"
+                  id="dept"
+                  placeholder="Department"
+                  required
+                />
+              </div>
+            </div>
+            <div class="row-duo">
+              <div class="input-group">
+                <i class="fas fa-calendar-check"></i>
+                <select id="yearStudy" required>
+                  <option value="" disabled selected>– Year of study –</option>
+                  <option value="I">I year</option>
+                  <option value="II">II year</option>
+                  <option value="III">III year</option>
+                  <option value="IV">IV year</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <i class="fas fa-phone-alt"></i>
+                <input
+                  type="tel"
+                  id="phone"
+                  placeholder="Phone number"
+                  required
+                />
+              </div>
+            </div>
+            <div class="input-group">
+              <i class="fas fa-envelope"></i>
+              <input
+                type="email"
+                id="email"
+                placeholder="Email address"
+                required
+              />
+            </div>
+
+            <input type="hidden" id="eventId" />
+            <div id="teamSection"></div>
+
+            <div
+              class="file-upload"
+              onclick="document.getElementById('idProofFile').click()"
+            >
+              <i class="fas fa-id-card"></i>
+              <span id="fileLabel">Upload College ID / Aadhar Card</span>
+            </div>
+            <input
+              type="file"
+              id="idProofFile"
+              accept="image/*,.pdf"
+              style="display: none"
+              onchange="updateFileLabel(this)"
+            />
+            <div id="fileError" class="error-message"></div>
+
+            <div class="checkbox-group" style="margin-top: 0.8rem">
+              <input type="checkbox" id="termsCheckbox" required />
+              <label for="termsCheckbox" class="terms-text"
+                >I accept the terms and conditions</label
+              >
+            </div>
+            <div id="termsError" class="error-message"></div>
+
+            <button
+              type="button"
+              class="btn-submit"
+              id="initialSubmitBtn"
+              onclick="validateAndShowVerification()"
+            >
+              <i class="fas fa-check-circle"></i> Review & verify details
+            </button>
+          </form>
+
+          <div id="verificationStep" class="verification-step">
+            <h3><i class="fas fa-clipboard-check"></i> Verify your details</h3>
+            <p>Please confirm the information below is correct</p>
+            <div class="verification-details" id="verificationDetails"></div>
+            <div class="action-buttons">
+              <button class="btn-verify btn-edit" onclick="goBackToEdit()">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button
+                class="btn-verify btn-confirm"
+                onclick="confirmAndGenerateTicket()"
+              >
+                <i class="fas fa-check"></i> Confirm & get ticket
+              </button>
+            </div>
+          </div>
+
+          <div id="successBlock" class="success-overlay">
+            <i
+              class="fas fa-check-circle"
+              style="font-size: 3rem; color: #119966"
+            ></i>
+            <h3>Registration Successful!</h3>
+            <p>your ticket is ready <i class="fas fa-smile-wink"></i></p>
+            <div class="qr-ticket">
+              <div class="qr-placeholder">
+                <i class="fas fa-qrcode"></i>
+                <span id="qrCodeText"></span>
+              </div>
+              <div>
+                <i
+                  class="fas fa-download"
+                  style="
+                    background: #e3eaf6;
+                    padding: 10px;
+                    border-radius: 50%;
+                    color: #243b77;
+                    cursor: pointer;
+                  "
+                  onclick="downloadQR()"
+                ></i>
+                <i
+                  class="fas fa-print"
+                  style="
+                    background: #e3eaf6;
+                    padding: 10px;
+                    border-radius: 50%;
+                    color: #243b77;
+                    cursor: pointer;
+                  "
+                  onclick="window.print()"
+                ></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const events = [
+        {
+          id: 'hackathon-2026',
+          title: 'Hackathon 2026',
+          date: '2026-03-25',
+          venue: 'Auditorium',
+          organizer: 'CSE Dept',
+          city: 'Coimbatore',
+          college: 'PSG College of Technology',
+          image: 'tech psg.jpg',
+          type: 'team',
+        },
+        {
+          id: 'debate-competition',
+          title: 'Inter-College Debate',
+          date: '2026-05-01',
+          venue: 'Auditorium',
+          organizer: 'English Dept',
+          city: 'Coimbatore',
+          college: 'PSG College of Technology',
+          image: 'non tech psg.jpg',
+          type: 'team',
+        },
+        {
+          id: 'robotics-workshop',
+          title: 'Robotics Workshop',
+          date: '2026-04-02',
+          venue: 'Lab 2',
+          organizer: 'Robotics Club',
+          city: 'Coimbatore',
+          college: 'Coimbatore Institute of Technology',
+          image: 'robotics cit.jpg',
+          type: 'team',
+        },
+        {
+          id: 'mobile-app-dev-workshop',
+          title: 'Mobile App Development Workshop',
+          date: '2026-05-12',
+          venue: 'Innovation Lab',
+          organizer: 'Mobile Dev Club',
+          city: 'Coimbatore',
+          college: 'Coimbatore Institute of Technology',
+          image: 'ma cit.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'data-science-seminar',
+          title: 'Data Science Seminar',
+          date: '2026-03-28',
+          venue: 'Seminar Hall',
+          organizer: 'Data Science Club',
+          city: 'Coimbatore',
+          college: 'Kumaraguru College of Technology',
+          image: 'datascience kct.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'environmental-awareness-seminar',
+          title: 'Environmental Awareness Seminar',
+          date: '2026-05-15',
+          venue: 'Seminar Hall',
+          organizer: 'Green Club',
+          city: 'Coimbatore',
+          college: 'Kumaraguru College of Technology',
+          image: 'non tech kct.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'iot-workshop',
+          title: 'Internet of Things Workshop',
+          date: '2026-06-08',
+          venue: 'Electronics Lab',
+          organizer: 'IoT Club',
+          city: 'Chennai',
+          college: 'Anna University',
+          image: 'tech au.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'music-festival',
+          title: 'Music Festival',
+          date: '2026-05-05',
+          venue: 'Open Stage',
+          organizer: 'Music Club',
+          city: 'Chennai',
+          college: 'Anna University',
+          image: 'non tech au.jpg',
+          type: 'team',
+        },
+        {
+          id: 'ai-seminar',
+          title: 'AI Seminar',
+          date: '2026-04-15',
+          venue: 'Seminar Hall',
+          organizer: 'IT Dept',
+          city: 'Chennai',
+          college: 'IIT Madras',
+          image: 'tech iit.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'entrepreneurship-seminar',
+          title: 'Entrepreneurship Seminar',
+          date: '2026-04-28',
+          venue: 'Conference Hall',
+          organizer: 'Entrepreneurship Cell',
+          city: 'Chennai',
+          college: 'IIT Madras',
+          image: 'non tech iit.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'python-programming-bootcamp',
+          title: 'Python Programming Bootcamp',
+          date: '2026-06-25',
+          venue: 'Coding Lab',
+          organizer: 'Programming Club',
+          city: 'Chennai',
+          college: 'SRM Institute of Science and Technology',
+          image: 'tech srm.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'gaming-tournament',
+          title: 'E-Sports Gaming Tournament',
+          date: '2026-05-18',
+          venue: 'Gaming Arena',
+          organizer: 'Gaming Society',
+          city: 'Chennai',
+          college: 'SRM Institute of Science and Technology',
+          image: 'non tech srm.jpg',
+          type: 'team',
+        },
+        {
+          id: 'cloud-computing-workshop',
+          title: 'Cloud Computing Workshop',
+          date: '2026-05-25',
+          venue: 'Computer Center',
+          organizer: 'Cloud Tech Dept',
+          city: 'Madurai',
+          college: 'Madurai Kamaraj University',
+          image: 'tech mku.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'football-tournament',
+          title: 'Football Tournament',
+          date: '2026-04-20',
+          venue: 'Sports Ground',
+          organizer: 'Sports Club',
+          city: 'Madurai',
+          college: 'Madurai Kamaraj University',
+          image: 'non tech mku.jpg',
+          type: 'team',
+        },
+        {
+          id: 'web-dev-workshop',
+          title: 'Web Development Workshop',
+          date: '2026-04-25',
+          venue: 'Computer Lab',
+          organizer: 'IT Club',
+          city: 'Madurai',
+          college: 'Thiagarajar College',
+          image: 'tech th.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'mental-health-awareness',
+          title: 'Mental Health Awareness Program',
+          date: '2026-05-28',
+          venue: 'Student Center',
+          organizer: 'Wellness Committee',
+          city: 'Madurai',
+          college: 'Thiagarajar College',
+          image: 'non tech th.png',
+          type: 'individual',
+        },
+        {
+          id: 'blockchain-conference',
+          title: 'Blockchain Technology Conference',
+          date: '2026-04-18',
+          venue: 'Auditorium',
+          organizer: 'Blockchain Society',
+          city: 'Madurai',
+          college: 'American College',
+          image: 'tech am.jpg',
+          type: 'individual',
+        },
+        {
+          id: 'cricket-tournament',
+          title: 'Inter-College Cricket Tournament',
+          date: '2026-05-03',
+          venue: 'Cricket Ground',
+          organizer: 'Cricket Club',
+          city: 'Madurai',
+          college: 'American College',
+          image: 'non tech am.jpg',
+          type: 'team',
+        },
+      ]
+
+      let currentEvent = null
+
+      function formatDate(dateString) {
+        const date = new Date(dateString)
+        return date.toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+        })
+      }
+
+      function loadEventFromURL() {
+        const params = new URLSearchParams(window.location.search)
+        const eventId = params.get('id')
+
+        if (eventId) {
+          currentEvent = events.find((e) => e.id === eventId)
+        }
+
+        if (!currentEvent) {
+          currentEvent = events[0]
+        }
+
+        updateEventPreview()
+        updateRegistrationForm()
+      }
+
+      function updateEventPreview() {
+        if (!currentEvent) return
+
+        document.getElementById('eventTitle').textContent = currentEvent.title
+        document.getElementById('eventDate').querySelector('span').textContent =
+          formatDate(currentEvent.date)
+        document
+          .getElementById('eventVenue')
+          .querySelector('span').textContent = currentEvent.venue
+        document
+          .getElementById('eventOrganizer')
+          .querySelector('span').textContent = currentEvent.organizer
+        document.getElementById('previewEventName').textContent =
+          currentEvent.title
+        document.getElementById('eventId').value = currentEvent.id
+
+        const eventTypeSpan = document.querySelector('#eventTypeDisplay span')
+        if (currentEvent.type === 'team') {
+          eventTypeSpan.innerHTML =
+            '<span style="background:#e3f2fd; color:#0d47a1; padding:4px 12px; border-radius:20px;"><i class="fas fa-users"></i> Team Event (2-4 members)</span>'
+        } else {
+          eventTypeSpan.innerHTML =
+            '<span style="background:#e8f5e8; color:#1b5e20; padding:4px 12px; border-radius:20px;"><i class="fas fa-user"></i> Individual Event</span>'
+        }
+
+        // Fix: Properly handle image loading
+        const previewImg = document.querySelector('.preview-img')
+        if (currentEvent.image) {
+          // Try to load the image, if it fails, show fallback
+          const img = new Image()
+          img.onload = function () {
+            previewImg.style.backgroundImage = `url("${currentEvent.image}")`
+            previewImg.style.backgroundSize = 'cover'
+            previewImg.style.backgroundPosition = 'center'
+            previewImg.innerHTML = ''
+          }
+          img.onerror = function () {
+            // If image fails to load, show default icon
+            previewImg.style.backgroundImage = ''
+            previewImg.innerHTML = '<i class="fas fa-calendar-alt"></i>'
+            previewImg.style.backgroundColor = '#e2e8f0'
+          }
+          img.src = currentEvent.image
+        } else {
+          previewImg.style.backgroundImage = ''
+          previewImg.innerHTML = '<i class="fas fa-calendar-alt"></i>'
+          previewImg.style.backgroundColor = '#e2e8f0'
+        }
+      }
+
+      function updateRegistrationForm() {
+        const teamSection = document.getElementById('teamSection')
+
+        if (currentEvent.type === 'team') {
+          teamSection.innerHTML = `
+            <div class="checkbox-group">
+              <input type="checkbox" id="teamReg" checked disabled />
+              <label style="font-weight: 500; opacity: 0.7;">
+                <i class="fas fa-users"></i> Team Event Registration (Required)
+              </label>
+            </div>
+            <div class="input-group">
+              <i class="fas fa-users"></i>
+              <input type="text" id="teamName" placeholder="Team Name" required />
+            </div>
+            <div id="teamSizeContainer" style="margin-bottom: 1rem;">
+              <div class="input-group">
+                <i class="fas fa-user-friends"></i>
+                <select id="teamSize" onchange="generateTeamMemberFields()">
+                  <option value="2">2 members</option>
+                  <option value="3">3 members</option>
+                  <option value="4">4 members</option>
+                </select>
+              </div>
+            </div>
+            <div id="teamMembersContainer" class="team-members-section" style="display: block;">
+              <div id="teamMemberFields"></div>
+            </div>
+          `
+          generateTeamMemberFields()
+        } else {
+          teamSection.innerHTML = `
+            <div class="checkbox-group">
+              <input type="checkbox" disabled />
+              <label style="font-weight: 500; opacity: 0.7;">
+                <i class="fas fa-user"></i> Individual Event Registration
+              </label>
+            </div>
+          `
+        }
+      }
+
+      function generateTeamMemberFields() {
+        if (currentEvent.type !== 'team') return
+
+        const teamSize = document.getElementById('teamSize').value
+        const teamMemberFields = document.getElementById('teamMemberFields')
+
+        let html = ''
+        for (let i = 1; i <= teamSize; i++) {
+          html += `
+            <div class="team-member-card">
+              <div class="team-member-title"><i class="fas fa-user-circle"></i> Member ${i}</div>
+              <div class="team-member-fields">
+                <div class="team-field">
+                  <i class="fas fa-user"></i>
+                  <input type="text" id="teamMemberName${i}" placeholder="Member ${i} Full Name">
+                </div>
+                <div class="team-field">
+                  <i class="fas fa-envelope"></i>
+                  <input type="email" id="teamMemberEmail${i}" placeholder="Member ${i} Email">
+                </div>
+              </div>
+            </div>
+          `
+        }
+
+        teamMemberFields.innerHTML = html
+      }
+
+      function validateTeamMembers() {
+        if (currentEvent.type !== 'team') return true
+
+        const teamSize = document.getElementById('teamSize').value
+        let isValid = true
+
+        const teamName = document.getElementById('teamName')
+        if (!teamName.value || teamName.value.trim() === '') {
+          teamName.classList.add('error-border')
+          isValid = false
+        }
+
+        for (let i = 1; i <= teamSize; i++) {
+          const nameField = document.getElementById(`teamMemberName${i}`)
+          const emailField = document.getElementById(`teamMemberEmail${i}`)
+
+          if (!nameField.value || nameField.value.trim() === '') {
+            nameField.classList.add('error-border')
+            isValid = false
+          }
+          if (
+            !emailField.value ||
+            emailField.value.trim() === '' ||
+            !emailField.value.includes('@')
+          ) {
+            emailField.classList.add('error-border')
+            isValid = false
+          }
+        }
+        return isValid
+      }
+
+      const fileInput = document.getElementById('idProofFile')
+      const fileLabel = document.getElementById('fileLabel')
+      const fileError = document.getElementById('fileError')
+      const termsError = document.getElementById('termsError')
+      const initialSubmitBtn = document.getElementById('initialSubmitBtn')
+      const verificationStep = document.getElementById('verificationStep')
+      const successBlock = document.getElementById('successBlock')
+      const verificationDetails = document.getElementById('verificationDetails')
+      const step1 = document.getElementById('step1')
+      const step2 = document.getElementById('step2')
+      const step3 = document.getElementById('step3')
+
+      window.updateFileLabel = function (input) {
+        if (input.files && input.files.length > 0) {
+          fileLabel.innerHTML = `<i class="fas fa-id-card"></i> ${input.files[0].name}`
+          fileError.innerHTML = ''
+        } else {
+          fileLabel.innerHTML = 'Upload College ID / Aadhar Card'
+        }
+      }
+
+      function setProgressStep(step) {
+        step1.classList.remove('active', 'completed')
+        step2.classList.remove('active', 'completed')
+        step3.classList.remove('active', 'completed')
+        if (step === 1) step1.classList.add('active')
+        else if (step === 2) {
+          step1.classList.add('completed')
+          step2.classList.add('active')
+        } else if (step === 3) {
+          step1.classList.add('completed')
+          step2.classList.add('completed')
+          step3.classList.add('completed')
+        }
+      }
+
+      window.validateAndShowVerification = function () {
+        let isValid = true
+        document
+          .querySelectorAll(
+            '.input-group input, .input-group select, .team-field input',
+          )
+          .forEach((el) => el.classList.remove('error-border'))
+        if (fileError) fileError.innerHTML = ''
+        if (termsError) termsError.innerHTML = ''
+
+        const requiredFields = [
+          'fullName',
+          'collegeName',
+          'regNumber',
+          'dept',
+          'yearStudy',
+          'phone',
+          'email',
+        ]
+        requiredFields.forEach((id) => {
+          const field = document.getElementById(id)
+          if (!field || !field.value || field.value === '') {
+            if (field) field.classList.add('error-border')
+            isValid = false
+          }
+        })
+
+        const email = document.getElementById('email')
+        if (email && email.value && !email.value.includes('@')) {
+          email.classList.add('error-border')
+          isValid = false
+        }
+
+        const phone = document.getElementById('phone')
+        if (phone && phone.value) {
+          const phoneDigits = phone.value.replace(/\D/g, '')
+          if (phoneDigits.length < 10) {
+            phone.classList.add('error-border')
+            isValid = false
+          }
+        }
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+          if (fileError)
+            fileError.innerHTML = '⚠️ Please upload College ID / Aadhar Card'
+          isValid = false
+        }
+
+        const terms = document.getElementById('termsCheckbox')
+        if (!terms.checked) {
+          if (termsError) termsError.innerHTML = '⚠️ You must accept the terms'
+          isValid = false
+        }
+
+        if (currentEvent.type === 'team') {
+          if (!validateTeamMembers()) isValid = false
+        }
+
+        if (!isValid) {
+          alert('❌ Please fill all required fields correctly and upload ID.')
+          return
+        }
+
+        showVerificationDetails()
+      }
+
+      function showVerificationDetails() {
+        const fullName = document.getElementById('fullName')?.value || ''
+        const collegeName = document.getElementById('collegeName')?.value || ''
+        const regNumber = document.getElementById('regNumber')?.value || ''
+        const dept = document.getElementById('dept')?.value || ''
+        const yearStudy = document.getElementById('yearStudy')?.value || ''
+        const phone = document.getElementById('phone')?.value || ''
+        const email = document.getElementById('email')?.value || ''
+        const fileName =
+          fileInput.files && fileInput.files[0]
+            ? fileInput.files[0].name
+            : 'Not uploaded'
+
+        let teamMembersHtml = ''
+        if (currentEvent.type === 'team') {
+          const teamName = document.getElementById('teamName')?.value || ''
+          const teamSize = document.getElementById('teamSize').value
+          teamMembersHtml = `
+            <div class="detail-row"><span class="detail-label">Team Name:</span><span class="detail-value">${teamName}</span></div>
+            <div class="detail-row"><span class="detail-label">Team Size:</span><span class="detail-value">${teamSize} members</span></div>
+          `
+          for (let i = 1; i <= teamSize; i++) {
+            const name =
+              document.getElementById(`teamMemberName${i}`)?.value || ''
+            const memberEmail =
+              document.getElementById(`teamMemberEmail${i}`)?.value || ''
+            teamMembersHtml += `<div class="detail-row"><span class="detail-label">Member ${i}:</span><span class="detail-value">${name}<br><small>${memberEmail}</small></span></div>`
+          }
+        }
+
+        verificationDetails.innerHTML = `
+          <div class="detail-row"><span class="detail-label">Event:</span><span class="detail-value">${currentEvent.title}</span></div>
+          <div class="detail-row"><span class="detail-label">Full Name:</span><span class="detail-value">${fullName}</span></div>
+          <div class="detail-row"><span class="detail-label">College:</span><span class="detail-value">${collegeName}</span></div>
+          <div class="detail-row"><span class="detail-label">Register Number:</span><span class="detail-value">${regNumber}</span></div>
+          <div class="detail-row"><span class="detail-label">Department:</span><span class="detail-value">${dept}</span></div>
+          <div class="detail-row"><span class="detail-label">Year:</span><span class="detail-value">${yearStudy}</span></div>
+          <div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">${phone}</span></div>
+          <div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">${email}</span></div>
+          <div class="detail-row"><span class="detail-label">Event Type:</span><span class="detail-value">${currentEvent.type === 'team' ? 'Team Event' : 'Individual Event'}</span></div>
+          ${teamMembersHtml}
+          <div class="detail-row"><span class="detail-label">ID Proof:</span><span class="detail-value">${fileName}</span></div>
+        `
+
+        verificationStep.classList.add('show')
+        initialSubmitBtn.style.display = 'none'
+        setProgressStep(2)
+      }
+
+      window.goBackToEdit = function () {
+        verificationStep.classList.remove('show')
+        initialSubmitBtn.style.display = 'block'
+        setProgressStep(1)
+      }
+
+      window.confirmAndGenerateTicket = function () {
+        const userInfo = JSON.parse(sessionStorage.getItem('userInfo') || localStorage.getItem('userInfo'))
+        const userEmail = userInfo ? (userInfo.email || userInfo.id) : null;
+        const registeredEventsKey = userEmail ? `registeredEvents_${userEmail}` : 'registeredEvents_guest';
+        const notificationsKey = userEmail ? `collegeNotifications_${userEmail}` : 'collegeNotifications_guest';
+        const activityKey = userEmail ? `recentActivities_${userEmail}` : 'recentActivities_guest';
+        const statsKey = userEmail ? `userStats_${userEmail}` : 'userStats_guest';
+
+        verificationStep.classList.remove('show')
+        successBlock.classList.add('show')
+        setProgressStep(3)
+
+        const fullName = document.getElementById('fullName')?.value || 'STUDENT'
+        const randomCode = Math.floor(Math.random() * 10000)
+          .toString(36)
+          .toUpperCase()
+        const nameCode = fullName.substring(0, 4).toUpperCase()
+        document.getElementById('qrCodeText').innerHTML =
+          `${currentEvent.title.substring(0, 4).toUpperCase()}-${nameCode}-${randomCode}`
+
+        initialSubmitBtn.disabled = true
+        initialSubmitBtn.style.opacity = 0.5
+
+        const registeredEvents = JSON.parse(
+          localStorage.getItem(registeredEventsKey) || '[]',
+        )
+        if (!registeredEvents.includes(currentEvent.id)) {
+          registeredEvents.push(currentEvent.id)
+          localStorage.setItem(registeredEventsKey, JSON.stringify(registeredEvents))
+          
+          if (userInfo) {
+            // Update Dashboard Stats logic
+            let stats = JSON.parse(localStorage.getItem(statsKey))
+            if (!stats) {
+              stats = {
+                totalEvents: 24,
+                registeredEvents: 0,
+                points: 0,
+                weekEvents: 4,
+                chartData: [0, 0, 24]
+              }
+            }
+            stats.registeredEvents += 1
+            stats.points += 10
+            if (stats.chartData) {
+              stats.chartData[1] += 1
+              if (stats.chartData[2] > 0) stats.chartData[2] -= 1
+            }
+            localStorage.setItem(statsKey, JSON.stringify(stats))
+
+            // Update Timeline Activity
+            let activities = JSON.parse(localStorage.getItem(activityKey)) || []
+            activities.unshift({
+                action: 'Registered: "' + currentEvent.title + '"',
+                time: "just now",
+                icon: "fa-regular fa-pen-to-square"
+            })
+            localStorage.setItem(activityKey, JSON.stringify(activities))
+          }
+          
+          let collegeNotifications = JSON.parse(localStorage.getItem(notificationsKey) || '[]');
+          collegeNotifications.unshift({
+            id: Date.now(),
+            type: 'confirmation',
+            title: 'Registration Confirmed: ' + currentEvent.title,
+            content: 'Your registration for ' + currentEvent.title + ' has been confirmed. Your QR ticket is ready.',
+            time: 'Just now',
+            unread: true
+          });
+          localStorage.setItem(notificationsKey, JSON.stringify(collegeNotifications));
+        }
+
+        // Use setTimeout to allow UI to update before blocking alert
+        setTimeout(() => {
+          alert('✅ Registration confirmed! Your QR ticket has been generated.')
+          window.location.href = 'notifications.html'
+        }, 100)
+      }
+
+      window.downloadQR = function () {
+        alert('QR code downloaded! (Demo)')
+      }
+
+      loadEventFromURL()
+      setProgressStep(1)
+    </script>
+      <script src="global-theme.js"></script>
+  </body>
+</html>

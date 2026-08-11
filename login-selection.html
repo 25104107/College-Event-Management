@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Selection - College Event Management</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .selection-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacing-xxl) 0;
+      }
+
+      .selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-xl);
+        max-width: 900px;
+        width: 100%;
+      }
+
+      .selection-card {
+        background: var(--white-color);
+        padding: var(--spacing-xxl);
+        text-align: center;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-normal);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-lg);
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .selection-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .selection-card i {
+        font-size: 4rem;
+        color: var(--primary-color);
+      }
+
+      .selection-card h2 {
+        font-size: 1.5rem;
+        color: var(--dark-color);
+      }
+
+      .selection-card p {
+        color: var(--gray-color);
+        font-size: 0.95rem;
+      }
+
+      .selection-card.admin i {
+        color: var(--secondary-color);
+      }
+
+      .selection-card .btn {
+        margin-top: var(--spacing-md);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <nav class="main-nav container">
+        <a class="logo" href="index.html">College Events</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="notifications.html">Notifications</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="signup.html">Sign Up</a>
+          <a
+            class="btn btn-secondary"
+            href="login-selection.html"
+            
+            >Login</a
+          >
+          <button
+            class="btn btn-secondary logout-btn"
+            onclick="logout()"
+            style="display: none"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="container selection-container">
+        <div class="selection-grid">
+          <a href="login.html" class="selection-card student">
+            <i class="fas fa-user-graduate"></i>
+            <h2>Student Login</h2>
+            <p>
+              Access your student dashboard, register for events, and manage
+              your profile.
+            </p>
+            <span class="btn btn-primary" style="width: 100%"
+              >Login as Student</span
+            >
+          </a>
+
+          <a href="admin-login.html" class="selection-card admin">
+            <i class="fas fa-user-shield"></i>
+            <h2>Admin Login</h2>
+            <p>
+              Access the administrative portal to manage events, registrations,
+              and participants.
+            </p>
+            <span class="btn btn-primary" style="width: 100%"
+              >Login as Admin</span
+            >
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-columns">
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-university"></i> College Event Management</p>
+            <p>
+              <i class="fas fa-map-marker-alt"></i> 123 University Ave, Campus
+              City
+            </p>
+            <p>
+              <i class="fas fa-envelope"></i>
+              <a href="mailto:events@college.edu" class="contact-link"
+                >events@college.edu</a
+              >
+            </p>
+            <p>
+              <i class="fas fa-phone"></i>
+              <a href="tel:+15551234567" class="contact-link"
+                >+1 (555) 123-4567</a
+              >
+            </p>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="events.html">Events</a></li>
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Student Portal</h3>
+            <ul>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="profile.html">My Profile</a></li>
+              <li><a href="login.html">Student Login</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Support & Admin</h3>
+            <ul>
+              <li><a href="admin-login.html">Admin Portal</a></li>
+              <li><a href="404errorpage.html">404 Error Page</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="privacy-policy.html">Privacy Policy</a></li>
+              <li><a href="terms-of-service.html">Terms of Service</a></li>
+            </ul>
+            <div class="footer-social" style="margin-top: 1.5rem">
+              <ul class="social-links">
+                <li>
+                  <a
+                    href="https://facebook.com/collegeeventmanagement"
+                    aria-label="Facebook"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://twitter.com/collegeevents"
+                    aria-label="Twitter"
+                    ><i class="fab fa-twitter"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://instagram.com/collegeevents"
+                    aria-label="Instagram"
+                    ><i class="fab fa-instagram"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://linkedin.com/company/college-event-management"
+                    aria-label="LinkedIn"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-newsletter-section">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 1rem;
+            "
+          >
+            <div style="flex: 1; min-width: 300px">
+              <h4>Subscribe to our Newsletter</h4>
+              <p>
+                Get latest event updates and announcements directly in your
+                inbox.
+              </p>
+            </div>
+            <form class="footer-newsletter-form" action="#" method="post">
+              <input
+                id="footer-email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                required
+              />
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>&copy; 2026 College Event Management. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="update_layout.py"
+      type="text/os-command"
+      style="display: none"
+    ></script>
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const userInfo = JSON.parse(
+          sessionStorage.getItem("userInfo") ||
+            localStorage.getItem("userInfo")
+        );
+        const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true" || localStorage.getItem("isLoggedIn") === "true";
+        const isAdminLoggedIn = sessionStorage.getItem("adminLoggedIn") === "true" || localStorage.getItem("adminInfo") !== null;
+        const navActions = document.querySelector(".nav-actions");
+        if (!navActions) return;
+        const signUpBtn = navActions.querySelector('a[href="signup.html"]');
+        const loginBtn = navActions.querySelector('a[href="login-selection.html"]');
+        const logoutBtn = navActions.querySelector(".logout-btn");
+
+        if (isLoggedIn || userInfo || isAdminLoggedIn) {
+          if (signUpBtn) signUpBtn.style.display = "none";
+          if (loginBtn) loginBtn.style.display = "none";
+          if (logoutBtn) logoutBtn.style.display = "inline-block";
+        } else {
+          if (signUpBtn) signUpBtn.style.display = "inline-block";
+          if (loginBtn) loginBtn.style.display = "inline-block";
+          if (logoutBtn) logoutBtn.style.display = "none";
+        }
+      });
+
+      if (typeof window.logout !== "function") {
+        window.logout = function () {
+          sessionStorage.clear();
+          localStorage.removeItem("userInfo");
+          window.location.href = "index.html";
+        };
+      }
+    </script>
+      <script src="global-theme.js"></script>
+  </body>
+</html>

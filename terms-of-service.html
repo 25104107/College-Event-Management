@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terms Of Service - College Event Management</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .legal-container {
+        padding: var(--spacing-xxl) 0;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .legal-card {
+        background: var(--white-color);
+        padding: var(--spacing-xxl);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        margin-bottom: var(--spacing-xxl);
+        line-height: 1.8;
+      }
+
+      .legal-card .section-title {
+        text-align: left;
+        margin-bottom: var(--spacing-xl);
+        color: var(--dark-color);
+        font-size: var(--text-3xl);
+      }
+
+      .legal-card .section-title::after {
+        left: 0;
+        transform: none;
+      }
+
+      .legal-card section {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .legal-card section:last-child {
+        margin-bottom: 0;
+      }
+
+      .legal-card h3 {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        font-size: var(--text-xl);
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .legal-card h3 i {
+        font-size: 1.1rem;
+        color: var(--primary-color);
+      }
+
+      .legal-card p {
+        color: var(--gray-color);
+        font-size: var(--text-md);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .legal-card ul {
+        margin-bottom: var(--spacing-md);
+        padding-left: var(--spacing-xl);
+      }
+
+      .legal-card li {
+        color: var(--gray-color);
+        margin-bottom: var(--spacing-sm);
+        position: relative;
+      }
+
+      .legal-card li::before {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        left: -1.75rem;
+        color: var(--success-color);
+        font-size: 0.8rem;
+      }
+
+      body.dark-mode .legal-card {
+        background: var(--dark-surface);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      body.dark-mode .legal-card .section-title {
+        color: var(--dark-text);
+      }
+
+      /* Override global styles that cause "fragmented card" look */
+      .legal-card section, 
+      body.dark-mode .legal-card section,
+      body.dark-mode section:not(.hero):not(.about-hero).legal-card-section {
+        background-color: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin-bottom: var(--spacing-xxl) !important;
+      }
+
+      .legal-card h3 i,
+      body.dark-mode .legal-card h3 i {
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+
+      body.dark-mode .legal-card {
+        background: var(--dark-surface) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      }
+
+      body.dark-mode .legal-card p,
+      body.dark-mode .legal-card li,
+      body.dark-mode .legal-card h3 {
+        color: var(--dark-text) !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <nav class="main-nav container">
+        <a class="logo" href="index.html">College Events</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="notifications.html">Notifications</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="signup.html">Sign Up</a>
+          <a class="btn btn-secondary" href="login-selection.html">Login</a>
+          <button
+            class="btn btn-secondary logout-btn"
+            onclick="logout()"
+            style="display: none"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="container legal-container">
+        <div class="legal-card">
+          <h1 class="section-title">Terms Of Service</h1>
+
+          <section class="legal-card-section">
+            <h3><i class="fas fa-file-contract"></i> 1. Acceptance of Terms</h3>
+            <p>
+              By accessing and using this platform, you agree to be bound by
+              these Terms of Service. If you do not agree to all of these terms,
+              please do not use the website.
+            </p>
+          </section>
+
+          <section class="legal-card-section">
+            <h3><i class="fas fa-user-check"></i> 2. User Responsibilities</h3>
+            <p>As a user of this platform, you agree to:</p>
+            <ul>
+              <li>
+                Provide accurate and complete information during registration.
+              </li>
+              <li>Maintain the confidentiality of your account credentials.</li>
+              <li>
+                Use the platform only for lawful purposes related to college
+                events.
+              </li>
+              <li>
+                Not engage in any activity that could harm or disrupt the
+                platform.
+              </li>
+            </ul>
+          </section>
+
+          <section class="legal-card-section">
+            <h3><i class="fas fa-calendar-check"></i> 3. Event Registration</h3>
+            <p>
+              Registering for an event constitutes an agreement between you and
+              the event organizer. Please review specific event rules and
+              guidelines before registering. We reserve the right to cancel or
+              modify event details if necessary.
+            </p>
+          </section>
+
+          <section class="legal-card-section">
+            <h3><i class="fas fa-gavel"></i> 4. Code of Conduct</h3>
+            <p>
+              Users must adhere to the college's code of conduct during all
+              events. Harassment, discrimination, or any form of inappropriate
+              behavior will not be tolerated and may result in disqualification
+              or account suspension.
+            </p>
+          </section>
+
+          <section class="legal-card-section">
+            <h3><i class="fas fa-exclamation-triangle"></i> 5. Limitation of Liability</h3>
+            <p>
+              College Event Management is provided "as is" without any
+              warranties. We shall not be liable for any damages arising out of
+              your use of the platform or participation in events.
+            </p>
+          </section>
+
+          <section class="legal-card-section">
+            <h3><i class="fas fa-edit"></i> 6. Changes to Terms</h3>
+            <p>
+              We reserve the right to update these terms at any time. Changes
+              will be effective immediately upon posting to the website. Your
+              continued use of the platform signifies your acceptance of the
+              updated terms.
+            </p>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-columns">
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-university"></i> College Event Management</p>
+            <p>
+              <i class="fas fa-map-marker-alt"></i> 123 University Ave, Campus
+              City
+            </p>
+            <p>
+              <i class="fas fa-envelope"></i>
+              <a href="mailto:events@college.edu" class="contact-link"
+                >events@college.edu</a
+              >
+            </p>
+            <p>
+              <i class="fas fa-phone"></i>
+              <a href="tel:+15551234567" class="contact-link"
+                >+1 (555) 123-4567</a
+              >
+            </p>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="events.html">Events</a></li>
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Student Portal</h3>
+            <ul>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="profile.html">My Profile</a></li>
+              <li><a href="login.html">Student Login</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Support & Admin</h3>
+            <ul>
+              <li><a href="admin-login.html">Admin Portal</a></li>
+              <li><a href="404errorpage.html">404 Error Page</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="privacy-policy.html">Privacy Policy</a></li>
+              <li><a href="terms-of-service.html">Terms of Service</a></li>
+            </ul>
+            <div class="footer-social" style="margin-top: 1.5rem">
+              <ul class="social-links">
+                <li>
+                  <a
+                    href="https://facebook.com/collegeeventmanagement"
+                    aria-label="Facebook"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://twitter.com/collegeevents"
+                    aria-label="Twitter"
+                    ><i class="fab fa-twitter"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://instagram.com/collegeevents"
+                    aria-label="Instagram"
+                    ><i class="fab fa-instagram"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://linkedin.com/company/college-event-management"
+                    aria-label="LinkedIn"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-newsletter-section">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 1rem;
+            "
+          >
+            <div style="flex: 1; min-width: 300px">
+              <h4>Subscribe to our Newsletter</h4>
+              <p>
+                Get latest event updates and announcements directly in your
+                inbox.
+              </p>
+            </div>
+            <form class="footer-newsletter-form" action="#" method="post">
+              <input
+                id="footer-email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                required
+              />
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>&copy; 2026 College Event Management. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  
+      <script src="global-theme.js"></script>
+  </body>
+</html>

@@ -1,0 +1,955 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Event Discovery</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <nav class="main-nav container">
+        <a class="logo" href="index.html">College Events</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="events.html" class="active">Events</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="notifications.html">Notifications</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="signup.html">Sign Up</a>
+          <a class="btn btn-secondary" href="login-selection.html">Login</a>
+          <button class="btn btn-secondary logout-btn" onclick="logout()" style="display: none">Logout</button>
+        </div>
+      </nav>
+    </header>
+
+    <section class="events-hero">
+      <h1>Smart Event Discovery</h1>
+      <p>Explore, discover, and register for the most exciting events happening across your campus and city.</p>
+    </section>
+
+    <section class="search-section">
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Search event name or keyword"
+      />
+      <button id="searchBtn">Search</button>
+    </section>
+    <div style="text-align:center; padding:10px 20px; color:#334155; font-size:0.95rem;">
+      <strong>Smart Event Finder:</strong> Click the floating AI button to ask about timings, venues, registration, workshops, hackathons, and first-year friendly events.
+    </div>
+
+    <div class="events-layout-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+      <aside>
+        <h3>Filter Events</h3>
+
+        <label for="categoryFilter">Category</label>
+        <select id="categoryFilter">
+          <option value="all">All</option>
+          <option value="Technical">Technical</option>
+          <option value="Non-Technical">Non-Technical</option>
+          <option value="Workshop">Workshop</option>
+          <option value="Cultural">Cultural</option>
+          <option value="Sports">Sports</option>
+          <option value="Seminar">Seminar</option>
+        </select>
+
+        <label for="dateFilter">Date</label>
+        <input id="dateFilter" type="date" />
+
+        <label for="cityFilter">City</label>
+        <select id="cityFilter">
+          <option value="all">All Cities</option>
+          <option value="Coimbatore">Coimbatore</option>
+          <option value="Chennai">Chennai</option>
+          <option value="Madurai">Madurai</option>
+        </select>
+
+        <label for="collegeFilter" id="collegeLabel" style="display: none"
+          >College</label
+        >
+        <select id="collegeFilter" style="display: none">
+          <option value="all">All Colleges</option>
+        </select>
+
+        <button
+          id="filterSearchBtn"
+          style="
+            width: 100%;
+            padding: 10px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+          "
+        >
+          Apply Filters
+        </button>
+      </aside>
+
+      <div class="main-content">
+        <h2 class="section-title">All Events</h2>
+        <div id="eventsGrid" class="events-grid"></div>
+      </div>
+    </div>
+
+    <script>
+      const initialEvents = [
+        {
+          id: 'hackathon-2026',
+          title: 'Hackathon 2026',
+          date: '2026-03-25',
+          venue: 'Auditorium',
+          organizer: 'CSE Dept',
+          coordinator: 'Dr. Rajesh Kumar',
+          phone: '+91 9876543210',
+          category: 'Technical',
+          city: 'Coimbatore',
+          college: 'PSG College of Technology',
+          description:
+            'Join the biggest coding competition on campus. Build projects and compete for prizes.',
+          image: 'tech psg.jpg',
+          trending: true,
+          recommended: true,
+          type: 'team',
+        },
+        {
+          id: 'debate-competition',
+          title: 'Inter-College Debate',
+          date: '2026-05-01',
+          venue: 'Auditorium',
+          organizer: 'English Dept',
+          coordinator: 'Prof. Anjali Sharma',
+          phone: '+91 9876543211',
+          category: 'Non-Technical',
+          city: 'Coimbatore',
+          college: 'PSG College of Technology',
+          description:
+            'Engage in intellectual discussions and improve your debating skills.',
+          image: 'non tech psg.jpg',
+          trending: false,
+          recommended: true,
+          type: 'team',
+        },
+
+        // COIMBATORE - Coimbatore Institute of Technology
+        {
+          id: 'robotics-workshop',
+          title: 'Robotics Workshop',
+          date: '2026-04-02',
+          venue: 'Lab 2',
+          organizer: 'Robotics Club',
+          coordinator: 'Vikram Bhatt',
+          phone: '+91 9876543212',
+          category: 'Technical',
+          city: 'Coimbatore',
+          college: 'Coimbatore Institute of Technology',
+          description:
+            'Hands-on robotics sessions where you build and program real robots.',
+          image: 'robotics cit.jpg',
+          trending: true,
+          recommended: false,
+          type: 'team',
+        },
+        {
+          id: 'mobile-app-dev-workshop',
+          title: 'Mobile App Development Workshop',
+          date: '2026-05-12',
+          venue: 'Innovation Lab',
+          organizer: 'Mobile Dev Club',
+          coordinator: 'Neha Patel',
+          phone: '+91 9876543213',
+          category: 'Non-Technical',
+          city: 'Coimbatore',
+          college: 'Coimbatore Institute of Technology',
+          description: 'Build your first mobile app using modern frameworks.',
+          image: 'ma cit.jpg',
+          trending: true,
+          recommended: false,
+          type: 'individual',
+        },
+
+        // COIMBATORE - Kumaraguru College of Technology
+        {
+          id: 'data-science-seminar',
+          title: 'Data Science Seminar',
+          date: '2026-03-28',
+          venue: 'Seminar Hall',
+          organizer: 'Data Science Club',
+          coordinator: 'Dr. Priya Singh',
+          phone: '+91 9876543214',
+          category: 'Technical',
+          city: 'Coimbatore',
+          college: 'Kumaraguru College of Technology',
+          description:
+            'Explore the world of data science and machine learning with industry experts.',
+          image: 'datascience kct.jpg',
+          trending: true,
+          recommended: true,
+          type: 'individual',
+        },
+        {
+          id: 'environmental-awareness-seminar',
+          title: 'Environmental Awareness Seminar',
+          date: '2026-05-15',
+          venue: 'Seminar Hall',
+          organizer: 'Green Club',
+          coordinator: 'Rohit Desai',
+          phone: '+91 9876543215',
+          category: 'Non-Technical',
+          city: 'Coimbatore',
+          college: 'Kumaraguru College of Technology',
+          description:
+            'Learn about sustainable practices and environmental conservation.',
+          image: 'non tech kct.jpg',
+          trending: false,
+          recommended: true,
+          type: 'individual',
+        },
+
+        // CHENNAI - Anna University
+        {
+          id: 'iot-workshop',
+          title: 'Internet of Things Workshop',
+          date: '2026-06-08',
+          venue: 'Electronics Lab',
+          organizer: 'IoT Club',
+          coordinator: 'Arun Kumar',
+          phone: '+91 9876543216',
+          category: 'Technical',
+          city: 'Chennai',
+          college: 'Anna University',
+          description:
+            'Build smart IoT devices and understand connected technologies.',
+          image: 'tech au.jpg',
+          trending: true,
+          recommended: false,
+          type: 'individual',
+        },
+        {
+          id: 'music-festival',
+          title: 'Music Festival',
+          date: '2026-05-05',
+          venue: 'Open Stage',
+          organizer: 'Music Club',
+          coordinator: 'Divya Krishnan',
+          phone: '+91 9876543217',
+          category: 'Non-Technical',
+          city: 'Chennai',
+          college: 'Anna University',
+          description:
+            'Celebrate music with performances from various artists and bands.',
+          image: 'non tech au.jpg',
+          trending: true,
+          recommended: false,
+          type: 'team',
+        },
+
+        // CHENNAI - IIT Madras
+        {
+          id: 'ai-seminar',
+          title: 'AI Seminar',
+          date: '2026-04-15',
+          venue: 'Seminar Hall',
+          organizer: 'IT Dept',
+          coordinator: 'Prof. Venkatesh Rao',
+          phone: '+91 9876543218',
+          category: 'Technical',
+          city: 'Chennai',
+          college: 'IIT Madras',
+          description:
+            'Learn about the latest advances in AI from industry experts.',
+          image: 'tech iit.jpg',
+          trending: false,
+          recommended: true,
+          type: 'individual',
+        },
+        {
+          id: 'entrepreneurship-seminar',
+          title: 'Entrepreneurship Seminar',
+          date: '2026-04-28',
+          venue: 'Conference Hall',
+          organizer: 'Entrepreneurship Cell',
+          coordinator: 'Meera Iyer',
+          phone: '+91 9876543219',
+          category: 'Non-Technical',
+          city: 'Chennai',
+          college: 'IIT Madras',
+          description:
+            'Learn from successful entrepreneurs and start your journey.',
+          image: 'non tech iit.jpg',
+          trending: false,
+          recommended: true,
+          type: 'individual',
+        },
+
+        // CHENNAI - SRM Institute of Science and Technology
+        {
+          id: 'python-programming-bootcamp',
+          title: 'Python Programming Bootcamp',
+          date: '2026-06-25',
+          venue: 'Coding Lab',
+          organizer: 'Programming Club',
+          coordinator: 'Sanjay Nath',
+          phone: '+91 9876543220',
+          category: 'Technical',
+          city: 'Chennai',
+          college: 'SRM Institute of Science and Technology',
+          description:
+            'Intensive Python programming course for beginners to advanced.',
+          image: 'tech srm.jpg',
+          trending: true,
+          recommended: false,
+          type: 'individual',
+        },
+        {
+          id: 'gaming-tournament',
+          title: 'E-Sports Gaming Tournament',
+          date: '2026-05-18',
+          venue: 'Gaming Arena',
+          organizer: 'Gaming Society',
+          coordinator: 'Arjun Verma',
+          phone: '+91 9876543221',
+          category: 'Non-Technical',
+          city: 'Chennai',
+          college: 'SRM Institute of Science and Technology',
+          description:
+            'Compete in popular e-sports games and win amazing prizes.',
+          image: 'non tech srm.jpg',
+          trending: true,
+          recommended: false,
+          type: 'team',
+        },
+
+        // MADURAI - Madurai Kamaraj University
+        {
+          id: 'cloud-computing-workshop',
+          title: 'Cloud Computing Workshop',
+          date: '2026-05-25',
+          venue: 'Computer Center',
+          organizer: 'Cloud Tech Dept',
+          coordinator: 'Harish Kumar',
+          phone: '+91 9876543222',
+          category: 'Technical',
+          city: 'Madurai',
+          college: 'Madurai Kamaraj University',
+          description: 'Master cloud technologies and deployment strategies.',
+          image: 'tech mku.jpg',
+          trending: true,
+          recommended: false,
+          type: 'individual',
+        },
+        {
+          id: 'football-tournament',
+          title: 'Football Tournament',
+          date: '2026-04-20',
+          venue: 'Sports Ground',
+          organizer: 'Sports Club',
+          coordinator: 'Mithun Singh',
+          phone: '+91 9876543223',
+          category: 'Non-Technical',
+          city: 'Madurai',
+          college: 'Madurai Kamaraj University',
+          description:
+            'Join or cheer as teams compete for the campus football trophy.',
+          image: 'non tech mku.jpg',
+          trending: true,
+          recommended: true,
+          type: 'team',
+        },
+
+        // MADURAI - Thiagarajar College
+        {
+          id: 'web-dev-workshop',
+          title: 'Web Development Workshop',
+          date: '2026-04-25',
+          venue: 'Computer Lab',
+          organizer: 'IT Club',
+          coordinator: 'Rishab Malhotra',
+          phone: '+91 9876543224',
+          category: 'Technical',
+          city: 'Madurai',
+          college: 'Thiagarajar College',
+          description:
+            'Learn modern web development techniques with hands-on projects.',
+          image: 'tech th.jpg',
+          trending: true,
+          recommended: false,
+          type: 'individual',
+        },
+        {
+          id: 'mental-health-awareness',
+          title: 'Mental Health Awareness Program',
+          date: '2026-05-28',
+          venue: 'Student Center',
+          organizer: 'Wellness Committee',
+          coordinator: 'Dr. Anjana Nair',
+          phone: '+91 9876543225',
+          category: 'Non-Technical',
+          city: 'Madurai',
+          college: 'Thiagarajar College',
+          description: 'Important discussions on mental health and well-being.',
+          image: 'non tech th.png',
+          trending: false,
+          recommended: true,
+          type: 'individual',
+        },
+
+        // MADURAI - American College
+        {
+          id: 'blockchain-conference',
+          title: 'Blockchain Technology Conference',
+          date: '2026-04-18',
+          venue: 'Auditorium',
+          organizer: 'Blockchain Society',
+          coordinator: 'Karan Patel',
+          phone: '+91 9876543226',
+          category: 'Technical',
+          city: 'Madurai',
+          college: 'American College',
+          description:
+            'Discover the future of blockchain technology and cryptocurrency.',
+          image: 'tech am.jpg',
+          trending: false,
+          recommended: true,
+          type: 'individual',
+        },
+        {
+          id: 'cricket-tournament',
+          title: 'Inter-College Cricket Tournament',
+          date: '2026-05-03',
+          venue: 'Cricket Ground',
+          organizer: 'Cricket Club',
+          coordinator: 'Sushant Gupta',
+          phone: '+91 9876543227',
+          category: 'Non-Technical',
+          city: 'Madurai',
+          college: 'American College',
+          description: 'Exciting cricket matches between top college teams.',
+          image: 'non tech am.jpg',
+          trending: true,
+          recommended: false,
+          type: 'team',
+        },
+      ]
+
+      // First, normalize initialEvents to standard schema
+      const normalizedInitialEvents = initialEvents.map((e) => ({
+        id: e.id,
+        name: e.title || 'Untitled Event',
+        location: e.city || 'Unknown',
+        date: e.date || 'TBD',
+        type: e.category || 'General',
+        teamType: e.type || 'individual',
+        college: e.college || 'Unknown',
+        venue: e.venue || 'TBD',
+        organizer: e.organizer || 'Unknown',
+        coordinator: e.coordinator || 'N/A',
+        phone: e.phone || 'N/A',
+        students: parseInt(e.students) || 150,
+        desc: e.description || '',
+        image:
+          e.image ||
+          `https://picsum.photos/500/300?random=${e.id || Math.floor(Math.random() * 1000)}`,
+      }))
+
+      // Clear old cache to prevent conflicts
+      localStorage.removeItem('events')
+      localStorage.removeItem('deletedEvents')
+
+      let rawEvents = JSON.parse(localStorage.getItem('events'))
+      if (!rawEvents) {
+        rawEvents = normalizedInitialEvents
+        localStorage.setItem('events', JSON.stringify(rawEvents))
+      }
+
+      // Sync and Normalize events using initialEvents as source for missing data
+      const initialLookup = {}
+      normalizedInitialEvents.forEach((e) => {
+        initialLookup[e.id] = e
+      })
+
+      const events = rawEvents.map((e) => {
+        const fallback = initialLookup[e.id] || {}
+        return {
+          id: e.id,
+          name: e.name || e.title || 'Untitled Event',
+          location: e.location || e.city || 'Unknown',
+          date: e.date || 'TBD',
+          type: e.type || e.category || 'General',
+          teamType: e.teamType || e.type || 'individual',
+          college: e.college || 'Unknown',
+          venue: e.venue || 'TBD',
+          organizer: e.organizer || 'Unknown',
+          coordinator: e.coordinator || fallback.coordinator || 'N/A',
+          phone: e.phone || fallback.phone || 'N/A',
+          students: parseInt(e.students) || 150,
+          desc: e.desc || e.description || '',
+          image:
+            e.image ||
+            `https://picsum.photos/500/300?random=${e.id || Math.floor(Math.random() * 1000)}`,
+        }
+      })
+
+      // Always save fully normalized events back to localStorage
+      localStorage.setItem('events', JSON.stringify(events))
+
+      // Check for removed events by ID
+      const deletedEvents =
+        JSON.parse(localStorage.getItem('deletedEvents')) || []
+      const updatedEvents = events.filter(
+        (e) =>
+          !deletedEvents.includes(String(e.id)) &&
+          !deletedEvents.includes(e.id),
+      )
+
+      const userInfo = JSON.parse(sessionStorage.getItem('userInfo') || localStorage.getItem('userInfo'));
+      const bookmarkKey = userInfo ? `bookmarks_${userInfo.email || userInfo.id}` : 'bookmarks_guest';
+
+      const state = {
+        search: '',
+        category: 'all',
+        date: '',
+        city: 'all',
+        college: 'all',
+        bookmarked: new Set(
+          JSON.parse(localStorage.getItem(bookmarkKey) || '[]'),
+        ),
+      }
+
+      const dom = {
+        searchInput: document.getElementById('searchInput'),
+        searchBtn: document.getElementById('searchBtn'),
+        categoryFilter: document.getElementById('categoryFilter'),
+        dateFilter: document.getElementById('dateFilter'),
+        cityFilter: document.getElementById('cityFilter'),
+        collegeFilter: document.getElementById('collegeFilter'),
+        collegeLabel: document.getElementById('collegeLabel'),
+        filterSearchBtn: document.getElementById('filterSearchBtn'),
+        eventsGrid: document.getElementById('eventsGrid'),
+      }
+
+      function normalize(str = '') {
+        return str.toString().trim().toLowerCase()
+      }
+
+      function isMatch(event) {
+        const searchText = normalize(state.search)
+        const matchesSearch =
+          !searchText ||
+          [
+            event.name,
+            event.desc,
+            event.organizer,
+            event.venue,
+            event.location,
+            event.college,
+          ]
+            .map(normalize)
+            .some((field) => field && field.includes(searchText))
+
+        const matchesCategory =
+          state.category === 'all' || event.type === state.category
+
+        const matchesCity =
+          state.city === 'all' || event.location === state.city
+
+        const matchesCollege =
+          state.college === 'all' || event.college === state.college
+
+        const matchesDate = !state.date || event.date === state.date
+
+        return (
+          matchesSearch &&
+          matchesCategory &&
+          matchesCity &&
+          matchesCollege &&
+          matchesDate
+        )
+      }
+
+      function createCard(event) {
+        const card = document.createElement('div')
+        card.className = 'card'
+
+        const imageUrl =
+          event.image ||
+          `https://picsum.photos/500/300?random=${Math.floor(Math.random() * 1000)}`
+        card.innerHTML = `
+          <img src="${imageUrl}" onerror="this.src='https://via.placeholder.com/500x300?text=No+Image'" />
+          <div class="card-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span class="ai-badge"><i class="fas fa-wand-magic-sparkles"></i> AI Pick</span>
+              <span style="font-size:0.75rem; color:#6b7280;">${event.category || 'General'}</span>
+            </div>
+            <h3>${event.name}</h3>
+            <div class="card-info">
+              <i class="fas fa-users"></i>
+              <span>${event.teamType === 'team' ? 'Team Event' : 'Individual Event'}</span>
+            </div>
+            <div class="card-info">
+              <i class="fas fa-calendar-alt"></i>
+              <span>${formatDate(event.date)}</span>
+            </div>
+            <div class="card-info">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>${event.venue}</span>
+            </div>
+            <div class="card-info">
+              <i class="fas fa-university"></i>
+              <span>${event.college || 'N/A'}</span>
+            </div>
+            <div class="card-info">
+              <i class="fas fa-city"></i>
+              <span>${event.location}</span>
+            </div>
+            <div class="buttons" style="flex-wrap: wrap;">
+              <button class="register" data-event="${event.id}">
+                <i class="fas fa-edit"></i> Register
+              </button>
+              <button class="bookmark ${state.bookmarked.has(event.id) ? 'active' : ''}" data-event="${event.id}">
+                <i class="fas fa-bookmark"></i> ${
+                  state.bookmarked.has(event.id) ? 'Bookmarked' : 'Bookmark'
+                }
+              </button>
+              <button class="find-teammates-btn btn-ai" data-event="${event.name}" style="width: 100%; margin-top: 6px; padding: 8px; border-radius: 6px; cursor: pointer;">
+                <i class="fas fa-user-plus"></i> Find Teammates with AI
+              </button>
+            </div>
+          </div>
+        `
+
+        card.addEventListener('click', (e) => {
+          if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return
+          window.location.href = `event-details.html?id=${event.id}`
+        })
+
+        const teammateBtn = card.querySelector('.find-teammates-btn')
+        if (teammateBtn) {
+          teammateBtn.addEventListener('click', (e) => {
+            e.stopPropagation()
+            openTeammateModal(event.name)
+          })
+        }
+
+        const registerBtn = card.querySelector('.register')
+        registerBtn.addEventListener('click', (e) => {
+          e.stopPropagation()
+          // Navigate to register page with event ID
+          window.location.href = `register.html?id=${event.id}`
+        })
+
+        const bookmarkBtn = card.querySelector('.bookmark')
+        bookmarkBtn.addEventListener('click', (e) => {
+          e.stopPropagation()
+          toggleBookmark(event.id)
+          render()
+        })
+
+        return card
+      }
+
+      function updateColleges() {
+        const selectedCity = state.city
+        dom.collegeFilter.innerHTML =
+          '<option value="all">All Colleges</option>'
+
+        if (selectedCity !== 'all') {
+          dom.collegeLabel.style.display = 'block'
+          dom.collegeFilter.style.display = 'block'
+
+          const collegesInCity = [
+            ...new Set(
+              updatedEvents
+                .filter(
+                  (event) => event.location === selectedCity && event.college,
+                )
+                .map((event) => event.college),
+            ),
+          ]
+          collegesInCity.forEach((college) => {
+            const option = document.createElement('option')
+            option.value = college
+            option.textContent = college
+            dom.collegeFilter.appendChild(option)
+          })
+        } else {
+          dom.collegeLabel.style.display = 'none'
+          dom.collegeFilter.style.display = 'none'
+          state.college = 'all'
+        }
+        render()
+      }
+
+      function formatDate(dateString) {
+        const options = { month: 'long', day: 'numeric' }
+        const date = new Date(dateString)
+        if (Number.isNaN(date.getTime())) return dateString
+        return date.toLocaleDateString(undefined, options)
+      }
+
+      function render() {
+        dom.eventsGrid.innerHTML = ''
+
+        const filtered = updatedEvents.filter(isMatch)
+
+        if (!filtered.length) {
+          dom.eventsGrid.innerHTML = '<p>No events match your filters.</p>'
+        } else {
+          filtered.forEach((event) =>
+            dom.eventsGrid.appendChild(createCard(event)),
+          )
+        }
+      }
+
+      function toggleBookmark(eventId) {
+        if (state.bookmarked.has(eventId)) {
+          state.bookmarked.delete(eventId)
+        } else {
+          state.bookmarked.add(eventId)
+        }
+        localStorage.setItem(
+          bookmarkKey,
+          JSON.stringify(Array.from(state.bookmarked)),
+        )
+        render()
+      }
+
+      function wireEvents() {
+        dom.searchBtn.addEventListener('click', () => {
+          state.search = dom.searchInput.value
+          render()
+        })
+
+        dom.searchInput.addEventListener('keyup', (e) => {
+          if (e.key === 'Enter') {
+            state.search = dom.searchInput.value
+            render()
+          }
+        })
+
+        dom.categoryFilter.addEventListener('change', () => {
+          state.category = dom.categoryFilter.value
+          render()
+        })
+
+        dom.dateFilter.addEventListener('change', () => {
+          state.date = dom.dateFilter.value
+          render()
+        })
+
+        dom.cityFilter.addEventListener('change', () => {
+          state.city = dom.cityFilter.value
+          updateColleges()
+        })
+
+        dom.collegeFilter.addEventListener('change', () => {
+          state.college = dom.collegeFilter.value
+          render()
+        })
+
+        dom.filterSearchBtn.addEventListener('click', () => {
+          render()
+        })
+      }
+
+      wireEvents()
+      updateColleges()
+      render()
+
+      // Auto-refresh when localStorage changes across tabs (from admin.html)
+      window.addEventListener('storage', (e) => {
+        if (
+          e.key === 'events' ||
+          e.key === 'deletedEvents' ||
+          e.key === 'activities'
+        ) {
+          location.reload()
+        }
+      })
+    </script>
+
+    <!-- AI Teammate Finder Modal -->
+    <div id="aiTeammateModal" class="ai-teammate-modal" style="display:none;">
+      <div class="ai-teammate-header">
+        <h3 class="ai-teammate-title"><i class="fas fa-robot"></i> AI Teammate Matcher</h3>
+        <button class="ai-teammate-close" aria-label="Close Teammate Matcher">&times;</button>
+      </div>
+      <p id="teammateModalSub" class="ai-teammate-subtitle">Finding optimal team partners for your selected event.</p>
+      <div class="ai-teammate-input-group">
+        <label class="ai-teammate-label">Skills required for your team:</label>
+        <div class="ai-teammate-input-row">
+          <input type="text" id="skillSearchInput" placeholder="e.g. React, Python, UI/UX" class="ai-teammate-input" />
+          <button id="findSkillBtn" class="btn btn-ai ai-teammate-action">Match</button>
+        </div>
+      </div>
+      <div id="teammateResultsList" class="ai-teammate-results">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+
+    <script>
+      async function openTeammateModal(eventName) {
+        const modal = document.getElementById('aiTeammateModal');
+        const sub = document.getElementById('teammateModalSub');
+        modal.dataset.eventName = eventName;
+        sub.textContent = `AI is matching available students for: "${eventName}"`;
+        modal.style.display = 'block';
+        loadTeammateMatches('', eventName);
+      }
+
+      async function loadTeammateMatches(skill = '', eventName = '') {
+        const listNode = document.getElementById('teammateResultsList');
+        listNode.innerHTML = '<p class="ai-teammate-loading">🔍 AI analyzing student profiles & skill compatibility...</p>';
+        
+        if (window.AIServices) {
+          const matches = await window.AIServices.findTeammates(skill, eventName);
+          listNode.innerHTML = '';
+          matches.forEach(m => {
+            listNode.innerHTML += `
+              <div class="ai-teammate-card">
+                <div class="ai-teammate-card-content">
+                  <img src="${m.avatar}" class="ai-teammate-avatar" />
+                  <div>
+                    <strong>${m.name}</strong>
+                    <span>${m.dept} • ${m.skills}</span>
+                  </div>
+                </div>
+                <div class="ai-teammate-card-actions">
+                  <span class="ai-badge">${m.match}% Match</span>
+                  <button class="ai-teammate-connect" onclick="alert('Connect request sent to ${m.name}!')">+ Connect</button>
+                </div>
+              </div>
+            `;
+          });
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const findSkillBtn = document.getElementById('findSkillBtn');
+        if (findSkillBtn) {
+          findSkillBtn.addEventListener('click', () => {
+            const skill = document.getElementById('skillSearchInput').value.trim();
+            const eventName = document.getElementById('aiTeammateModal').dataset.eventName || '';
+            loadTeammateMatches(skill, eventName);
+          });
+        }
+
+        const closeBtn = document.querySelector('.ai-teammate-close');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            document.getElementById('aiTeammateModal').style.display = 'none';
+          });
+        }
+      });
+    </script>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-columns">
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-university"></i> College Event Management</p>
+            <p><i class="fas fa-map-marker-alt"></i> 123 University Ave, Campus City</p>
+            <p><i class="fas fa-envelope"></i> <a href="mailto:events@college.edu" class="contact-link">events@college.edu</a></p>
+            <p><i class="fas fa-phone"></i> <a href="tel:+15551234567" class="contact-link">+1 (555) 123-4567</a></p>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="events.html">Events</a></li>
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Student Portal</h3>
+            <ul>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="profile.html">My Profile</a></li>
+              <li><a href="login.html">Student Login</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Support & Admin</h3>
+            <ul>
+              <li><a href="admin-login.html">Admin Portal</a></li>
+              <li><a href="404errorpage.html">404 Error Page</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="privacy-policy.html">Privacy Policy</a></li>
+              <li><a href="terms-of-service.html">Terms of Service</a></li>
+            </ul>
+            <div class="footer-social" style="margin-top: 1.5rem">
+              <ul class="social-links">
+                <li>
+                  <a
+                    href="https://facebook.com/collegeeventmanagement"
+                    aria-label="Facebook"
+                    target="_blank"
+                    ><i class="fab fa-facebook-f"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://twitter.com/collegeevents"
+                    aria-label="Twitter"
+                    target="_blank"
+                    ><i class="fab fa-twitter"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://instagram.com/collegeevents"
+                    aria-label="Instagram"
+                    target="_blank"
+                    ><i class="fab fa-instagram"></i
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://linkedin.com/company/college-event-management"
+                    aria-label="LinkedIn"
+                    target="_blank"
+                    ><i class="fab fa-linkedin-in"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer-newsletter-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="flex: 1; min-width: 300px">
+              <h4>Subscribe to our Newsletter</h4>
+              <p>Get latest event updates currently in your inbox.</p>
+            </div>
+            <form class="footer-newsletter-form" action="#" method="post">
+              <input name="email" type="email" placeholder="Enter your email" required />
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>&copy; 2026 College Event Management. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+    <script src="ai-services.js"></script>
+    <script src="ai-assistant.js"></script>
+    <script src="global-theme.js"></script>
+  </body>
+</html>
